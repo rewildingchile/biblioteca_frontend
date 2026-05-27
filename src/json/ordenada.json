@@ -1,0 +1,72 @@
+{
+   "ordenada":[
+      {
+         "idSeccion":1,
+         "seccion":"Resumen/Panel A",
+         "ordenadas":[
+            {
+               "orden":1,
+               "idPar":5
+            }
+         ]
+      },
+      {
+         "idSeccion":2,
+         "seccion":"Resumen/Panel B",
+         "ordenadas":[
+            {
+               "orden":1,
+               "idPar":4
+            }
+         ]
+      },
+      {
+         "idSeccion":3,
+         "seccion":"Historial/Panel A",
+         "ordenadas":[
+            {
+               "orden":1,
+               "idPar":5
+            }
+         ]
+      },
+      {
+         "idSeccion":4,
+         "seccion":"Historial/Panel B",
+         "ordenadas":[
+            {
+               "orden":1,
+               "idPar":4
+            }
+         ]
+      },
+      {
+         "idSeccion":5,
+         "seccion":"Live/Vista Normal",
+         "ordenadas":[
+            {
+               "orden":1,
+               "idPar":5
+            },
+            {
+               "orden":2,
+               "idPar":1
+            }
+         ]
+      },
+      {
+         "idSeccion":6,
+         "seccion":"Live/Vista Ampliada",
+         "ordenadas":[
+            {
+               "orden":1,
+               "idPar":5
+            },
+            {
+               "orden":2,
+               "idPar":1
+            }
+         ]
+      }
+   ]
+}

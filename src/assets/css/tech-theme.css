@@ -1,0 +1,495 @@
+ 
+
+/* =========================
+   FONDO BASE
+========================= */
+
+.bg-tech {
+  background:
+    radial-gradient(circle at top left, rgba(0,180,255,0.12), transparent 30%),
+    radial-gradient(circle at bottom right, rgba(255,0,180,0.12), transparent 35%),
+    linear-gradient(135deg, #050816 0%, #090b1f 45%, #12091d 100%);
+}
+
+/* =========================
+   CARD
+========================= */
+
+.login-card {
+  position: relative;
+  overflow: hidden;
+
+  background: rgba(15, 23, 42, 0.72);
+
+  border: 1px solid rgba(255,255,255,0.08);
+
+  backdrop-filter: blur(14px);
+
+  box-shadow:
+    0 0 25px rgba(0, 174, 255, 0.15),
+    0 0 60px rgba(255, 0, 170, 0.08);
+    z-index: 1;
+  animation: cardFloat 6s ease-in-out infinite;
+}
+
+.login-card::before {
+ 
+}
+
+/* =========================
+   INPUTS
+========================= */
+
+.tech-input {
+  width: 100%;
+
+  background: rgba(255,255,255,0.04);
+
+  border: 1px solid rgba(255,255,255,0.08);
+
+  color: white;
+
+  padding: 12px 14px;
+
+  border-radius: 12px;
+
+  outline: none;
+
+  transition: all .25s ease;
+
+  font-family: monospace;
+}
+
+.tech-input::placeholder {
+  color: rgba(255,255,255,0.45);
+}
+
+.tech-input:focus {
+  border-color: #38bdf8;
+
+  box-shadow:
+    0 0 0 2px rgba(56,189,248,0.15),
+    0 0 20px rgba(56,189,248,0.3);
+}
+
+/* =========================
+   BUTTON
+========================= */
+
+.tech-button {
+  width: 100%;
+
+  padding: 12px;
+
+  border-radius: 14px;
+
+  font-size: 1rem;
+
+  font-family: monospace;
+
+  color: white;
+
+  background:
+    linear-gradient(
+      135deg,
+      #2563eb,
+      #9333ea,
+      #ec4899
+    );
+
+  background-size: 300% 300%;
+
+  transition: all .3s ease;
+
+ 
+
+  box-shadow:
+    0 0 20px rgba(59,130,246,0.35);
+    
+  z-index: 100;
+}
+
+.tech-button:hover {
+  transform: translateY(-2px) scale(1.01);
+
+  box-shadow:
+    0 0 30px rgba(236,72,153,0.4);
+}
+
+/* =========================
+   GLOWS
+========================= */
+
+.glow {
+  position: absolute;
+  border-radius: 9999px;
+  filter: blur(100px);
+  opacity: .35;
+}
+
+.glow-blue {
+  width: 400px;
+  height: 400px;
+  background: #00bfff;
+  top: -120px;
+  left: -120px;
+  animation: pulseGlow 8s ease infinite;
+}
+
+.glow-pink {
+  width: 320px;
+  height: 320px;
+  background: #ff00aa;
+  bottom: -120px;
+  right: -100px;
+  animation: pulseGlow 7s ease infinite reverse;
+}
+
+.glow-purple {
+  width: 250px;
+  height: 250px;
+  background: #7c3aed;
+  top: 50%;
+  left: 40%;
+  animation: floatGlow 10s ease-in-out infinite;
+}
+
+/* =========================
+   GRID
+========================= */
+
+.tech-grid {
+  position: absolute;
+  inset: 0;
+
+  background-image:
+    linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+
+  background-size: 40px 40px;
+
+  mask-image: radial-gradient(circle at center, black 40%, transparent 100%);
+}
+
+/* =========================
+   LINEAS
+========================= */
+
+.line {
+  position: absolute;
+  width: 2px;
+  height: 180px;
+
+  background: linear-gradient(
+    to bottom,
+    transparent,
+    rgba(0,255,255,0.9),
+    transparent
+  );
+
+  opacity: .5;
+
+  animation: lineMove 6s linear infinite;
+}
+
+.line-1 {
+  left: 15%;
+  top: -200px;
+}
+
+.line-2 {
+  left: 50%;
+  top: -300px;
+  animation-delay: 2s;
+}
+
+.line-3 {
+  left: 80%;
+  top: -250px;
+  animation-delay: 4s;
+}
+
+/* =========================
+   PARTICULAS
+========================= */
+
+.particles span {
+  position: absolute;
+  display: block;
+
+  width: 3px;
+  height: 3px;
+
+  background: rgba(255,255,255,0.7);
+
+  border-radius: 9999px;
+
+  animation: particleFloat linear infinite;
+}
+
+.particles span:nth-child(odd) {
+  background: #38bdf8;
+}
+
+.particles span:nth-child(even) {
+  background: #ec4899;
+}
+
+.particles span:nth-child(1) {
+  left: 10%;
+  animation-duration: 11s;
+  animation-delay: 0s;
+}
+
+.particles span:nth-child(2) {
+  left: 20%;
+  animation-duration: 14s;
+}
+
+.particles span:nth-child(3) {
+  left: 35%;
+  animation-duration: 9s;
+}
+
+.particles span:nth-child(4) {
+  left: 50%;
+  animation-duration: 12s;
+}
+
+.particles span:nth-child(5) {
+  left: 65%;
+  animation-duration: 15s;
+}
+
+.particles span:nth-child(6) {
+  left: 80%;
+  animation-duration: 10s;
+}
+
+.particles span:nth-child(7) {
+  left: 90%;
+  animation-duration: 16s;
+}
+
+/* =========================
+   ANIMACIONES
+========================= */
+
+@keyframes pulseGlow {
+  0%,100% {
+    transform: scale(1);
+    opacity: .35;
+  }
+
+  50% {
+    transform: scale(1.15);
+    opacity: .55;
+  }
+}
+
+@keyframes floatGlow {
+  0%,100% {
+    transform: translateY(0px);
+  }
+
+  50% {
+    transform: translateY(-30px);
+  }
+}
+
+@keyframes gradientMove {
+  0% {
+    background-position: 0% 50%;
+  }
+
+  50% {
+    background-position: 100% 50%;
+  }
+
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+@keyframes shine {
+  100% {
+    transform: translateX(200%);
+  }
+}
+
+@keyframes lineMove {
+  0% {
+    transform: translateY(0);
+    opacity: 0;
+  }
+
+  20% {
+    opacity: .7;
+  }
+
+  100% {
+    transform: translateY(120vh);
+    opacity: 0;
+  }
+}
+
+@keyframes particleFloat {
+  0% {
+    top: 100%;
+    opacity: 0;
+    transform: scale(0);
+  }
+
+  10% {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  100% {
+    top: -10%;
+    opacity: 0;
+    transform: scale(0);
+  }
+}
+
+@keyframes cardFloat {
+  0%,100% {
+    transform: translateY(0px);
+  }
+
+  50% {
+    transform: translateY(-5px);
+  }
+}
+ 
+ 
+.finance-panel {
+
+  border-radius: 12px;
+
+  background:
+    radial-gradient(circle at top left,
+      rgba(0, 180, 255, .08),
+      transparent 28%),
+
+    radial-gradient(circle at bottom right,
+      rgba(255, 0, 180, .06),
+      transparent 35%),
+
+    linear-gradient(135deg,
+      #011469 3%,
+      #2e333e 45%,
+      #2a3652 100%);
+
+  border: 1px solid rgba(255, 255, 255, .06);
+
+  backdrop-filter: blur(20px);
+
+  box-shadow:
+    0 0 60px rgba(0, 0, 0, .35);
+}
+
+/* =========================
+   GLOWS
+========================= */
+
+.finance-glow {
+
+  position: absolute;
+
+  border-radius: 9999px;
+
+  filter: blur(90px);
+
+  opacity: .20;
+
+  pointer-events: none;
+}
+
+.finance-glow-cyan {
+
+  width: 260px;
+  height: 260px;
+
+  background: #06b6d4;
+
+  top: -100px;
+  left: -100px;
+}
+
+.finance-glow-pink {
+
+  width: 220px;
+  height: 220px;
+
+  background: #ec4899;
+
+  bottom: -80px;
+  right: -80px;
+}
+
+/* =========================
+   CARD
+========================= */
+
+.finance-card {
+
+  display: flex;
+  align-items: center;
+  gap: 16px;
+
+  padding: 20px;
+
+  border-radius: 24px;
+
+  background: rgba(255, 255, 255, .03);
+
+  border: 1px solid rgba(255, 255, 255, .06);
+
+  backdrop-filter: blur(14px);
+
+  transition: all .25s ease;
+}
+
+.finance-card:hover {
+
+  transform: translateY(-2px);
+
+  border-color: rgba(34, 211, 238, .20);
+
+  box-shadow:
+    0 0 25px rgba(34, 211, 238, .10);
+}
+
+.finance-card-icon {
+
+  width: 52px;
+  height: 52px;
+
+  border-radius: 18px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.finance-label {
+
+  font-size: 13px;
+
+  color: #94a3b8;
+
+  margin-bottom: 4px;
+}
+
+.finance-value {
+
+  font-size: 28px;
+
+  font-weight: 700;
+
+  color: white;
+
+  line-height: 1;
+}
+ 
