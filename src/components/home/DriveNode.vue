@@ -1,4 +1,5 @@
 <template>
+   
   <div class="node">
 
     <!-- FILA -->
@@ -37,7 +38,7 @@
         <!-- FILE -->
         <svg
           v-else
-          @click="handleClick"
+          @click="handleClick(node)"
           class="w-5 h-5"
           fill="none"
           stroke="currentColor"
@@ -76,7 +77,7 @@
       >
        {{ node.name }}
       </a>
- {{ node.text_content }}
+ 
     </div>
 
     <!-- CHILDREN -->
@@ -220,7 +221,30 @@
 }
 
 </style>
-vue
+<style scoped>
+.node {
+  margin-left: 10px;
+}
+
+.node-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  padding: 4px;
+}
+
+.node-row:hover {
+  background: #f3f3f3;
+  color:black;
+}
+
+.children {
+  margin-left: 20px;
+  border-left: 1px solid #ddd;
+  padding-left: 10px;
+}
+</style>
 <!-- DriveNode.vue -->
  
 <script setup>
@@ -250,8 +274,10 @@ const toggle = () => {
 
 const panel = inject('panel')
 
-const handleClick = () => {
+const handleClick = (node) => {
+  console.log(node)
   panel.setVisible(true)
+  panel.setNode(node)
 }
 
 // Proveemos tanto el estado como la función
@@ -262,27 +288,3 @@ provide('nodo', {
 
 </script>
 
-<style scoped>
-.node {
-  margin-left: 10px;
-}
-
-.node-row {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  cursor: pointer;
-  padding: 4px;
-}
-
-.node-row:hover {
-  background: #f3f3f3;
-  color:black;
-}
-
-.children {
-  margin-left: 20px;
-  border-left: 1px solid #ddd;
-  padding-left: 10px;
-}
-</style>

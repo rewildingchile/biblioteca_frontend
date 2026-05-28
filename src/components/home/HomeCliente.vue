@@ -249,16 +249,15 @@
   <div  v-if="panelDerechoVisible"
     class="fixed top-0 right-0 z-50
            h-full w-[680px]
-           bg-white
-           bg-slate-950/40 
+           bg-gray-600
            shadow-2xl
            border-l border-gray-200
            flex flex-col"
   >
 
     <!-- HEADER -->
-    <div class="flex items-center justify-between px-6 py-4 border-b bg-gray-50">
-      <h2 class="text-lg font-semibold text-gray-800">
+    <div class="flex items-center justify-between px-6 py-4 border-b ">
+      <h2 class="text-lg font-semibold text-white">
         Información del archivo
       </h2>
 
@@ -274,12 +273,12 @@
     <!-- CONTENIDO -->
     <div class="flex-1 overflow-y-auto p-5 space-y-3">
 
-    
-
+    -{{ nodeSelec }}-
+ 
     </div>
 
     <!-- FOOTER -->
-    <div class="border-t p-4 bg-gray-50">
+    <div class="border-t p-4  bg-slate-950/70 ">
       <button
         @click="panelDerechoVisible = false"
         class="w-full py-2 rounded-xl
@@ -350,7 +349,7 @@
 @import "@/assets/css/tech-theme.css";
 </style>
 <script>
-import axios from "axios";
+import api from "@/api/axios";
 import i18n from '@/i18n';
 
 
@@ -483,15 +482,9 @@ export default
         this.isOnline = false;
       }
     },
-    loadFormCambiaPass(valor){
-      this.showFormCambiaPass = valor;
-    },
+    
 
-
-    loadModalUsuarios(valor) {
-      console.log('loadModalUsuarios')
-      this.showModalUsuarios = valor;
-    },
+    
     loadModalErrorAcceso(valor){
       console.log('loadModalUsuarios')
       this.showModalErrorAcceso = valor;
@@ -501,14 +494,7 @@ export default
       console.log('showModalServiceUnavailable')
       this.showModalServiceUnavailable = valor;
     },
-    loadDivisiones(f) {
-      this.selectDivisionesByIdFaena = f.id;
-      this.nombreFaena = f.faena;
-      this.pantalla = 2;
-    },
-    loadFaenas() {
-      this.pantalla = 1;
-    },
+ 
     loadFormCliente() {
       this.pantalla = 1;
     },
@@ -519,52 +505,23 @@ export default
       this.sidebarOpen = false;
     },
  
-    sendDivisionesMenuLat(f) {
-      this.faenas = f;
-    },
-    
-    async sendPreference(jsonString) 
-    {
-      console.log('sendPreferences');
-      let url ='/api/ctl/setPreference';
+    async getFileDocument(){
+     try{      
+        let data = { "file_id": this.nodeSelec.drive_file_id };
+        const response = await api.post("api/v1/filedocument/", data,{
+             headers: {
+            "Content-Type": "application/json",
+           
+          },
+        });
 
-      const apiKey = this.$store.state.login.tokenLogin;
-      try {
-       const resp = await axios.post(url, jsonString, {
-         headers: {
-           'Content-Type': 'application/json',
-          'Authorization': `${apiKey}`
-         },
-       });
-      
-      let msg;
-       const status=resp?.data?.status;
-       switch (status) {
-         case 200: msg='solicitud fetch ok'; break;   
-       }
-       return msg;
-     } catch (error) {
-       console.log(error.responseJSON.message);
-       throw error;
-     }
-       
-    },
-  
-    chgCentro(value){
-        this.centro =value;
-        this.pantalla=4;
-    },
+        if(response?.status ===200)
+        {
 
-    chgCentroCuentasMayorCero(value){
-      this.centro = value
-      this.pantalla=5
-      this.incluyeCero=false
-
-    },
-    chgCentroCuentasIncluidoCero(value){
-      this.centro = value
-      this.pantalla=5
-      this.incluyeCero=true
+        }
+      } catch (e) {
+        console.error("Credenciales inválidas ❌",e);
+      }
     }
  
  
@@ -627,6 +584,7 @@ export default
     const isSmallScreen = ref(window.innerWidth <= 768);
     const isPortrait = ref(window.matchMedia("(orientation: portrait)").matches);
     const panelDerechoVisible = ref(false)
+    const nodeSelec = ref({})
 
     const updateScreenSize = () => {
       isSmallScreen.value = window.innerWidth <= 768;
@@ -643,6 +601,9 @@ export default
     const togglePanelDerecho = (valor) => {
       panelDerechoVisible.value = valor
     }
+    const selectNode=(valor)=>{
+      nodeSelec.value=valor
+    }
 
     onMounted(() => {
       window.addEventListener("resize", updateAll);
@@ -656,14 +617,18 @@ export default
     
     provide('panel', {
       visible: panelDerechoVisible,
-      setVisible: togglePanelDerecho
+      setVisible: togglePanelDerecho,
+      setNode:selectNode
     })
 
-    return { isSmallScreen, isPortrait,panelDerechoVisible };
+    return { isSmallScreen, isPortrait,panelDerechoVisible, nodeSelec };
   },
    watch: {
-      centro_id(value){
-        console.log('cambioo centro_id',value)
+      nodeSelec(value){
+        console.log('cambioo nodeSelec',value)
+        if(value){
+          this.getFileDocument()
+        }
       },
       
   },

@@ -1,4 +1,10 @@
 <template>
+   <div class="flex justify-between">
+      <span class="text-xs text-indigo-500 font-mono bg-indigo-50 px-3 py-1 rounded-full shadow-sm">&#60;Home/DriveTree.vue&#62;</span>
+    </div>
+     <div class="flex justify-between">
+      <span class="text-xs text-indigo-500 font-mono bg-indigo-50 px-3 py-1 rounded-full shadow-sm">&#60;Home/DriveNode.vue&#62;</span>
+    </div>
   <div class="drive-tree">
     <DriveNode
       v-for="node in nodes"
