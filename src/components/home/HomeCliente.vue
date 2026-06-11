@@ -230,77 +230,117 @@
 
   </div>
 
-<!-- OVERLAY -->
-<div
-  v-if="panelDerechoVisible"
-  @click="panelDerechoVisible = false"
-  class="fixed inset-0 z-40  "
-></div>
 
-<!-- PANEL LATERAL DERECHO -->
-<transition
-  enter-active-class="transition duration-300 ease-out"
-  enter-from-class="translate-x-full opacity-0"
-  enter-to-class="translate-x-0 opacity-100"
-  leave-active-class="transition duration-200 ease-in"
-  leave-from-class="translate-x-0 opacity-100"
-  leave-to-class="translate-x-full opacity-0"
->
-  <div  v-if="panelDerechoVisible"
-    class="fixed top-0 right-0 z-50
+<!-- BUSQUEDA--> 
+<!-- Overlay --> 
+<div v-if="showBusqueda"  @click="showBusqueda = false" class="fixed inset-0 z-50 flex items-start justify-center pt-24 bg-black/30  backdrop-blur-sm ">
+
+  <!-- Caja búsqueda -->
+  <div
+    class="w-full max-w-3xl
+           bg-white/90 backdrop-blur-xl
+           border border-gray-200
+           rounded-3xl
+           shadow-2xl
+           overflow-hidden"
+  >
+
+    <!-- Input -->
+    <div class="flex items-center px-6 py-5">
+
+      <!-- Lupa -->
+      <svg
+        class="w-7 h-7 text-gray-400 mr-4"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.8"
+        viewBox="0 0 24 24"
+      >
+        <circle cx="11" cy="11" r="6"></circle>
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="M20 20l-4.2-4.2"
+        />
+      </svg>
+
+      <input
+        v-model="search"
+        type="text"
+        placeholder="Buscar documentos.."
+        class="flex-1
+               bg-transparent
+               text-2xl
+               text-gray-800
+               placeholder-gray-400
+               outline-none"
+      />
+
+    </div>
+
+    <!-- Resultados -->
+    <div
+      class="max-h-[400px]
+             overflow-y-auto
+             border-t border-gray-100"
+    >
+
+      <div
+        v-for="item in resultados_busqueda"
+        :key="item.id"
+        class="px-6 py-4
+               hover:bg-indigo-50
+               cursor-pointer
+               transition"
+      >
+        <div class="font-medium text-gray-800">
+          {{ item.nombre }}
+        </div>
+
+        <div class="text-sm text-gray-500">
+          {{ item.descripcion }}
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+ 
+        <div  v-if="panelDerechoVisible">
+        <!-- OVERLAY -->
+
+
+   
+        <div @click="panelDerechoVisible = false" class="fixed inset-0 z-40  "></div>
+        <!-- PANEL LATERAL DERECHO -->
+      <transition   enter-active-class="transition duration-300 ease-out" enter-from-class="translate-x-full opacity-0"
+            enter-to-class="translate-x-0 opacity-100" leave-active-class="transition duration-200 ease-in"
+            leave-from-class="translate-x-0 opacity-100" leave-to-class="translate-x-full opacity-0">
+          <div class="fixed top-0 right-0 z-50
            h-full w-[680px]
            bg-gray-600
            shadow-2xl
            border-l border-gray-200
-           flex flex-col"
-  >
+           flex flex-col">
 
-    <!-- HEADER -->
-    <div class="flex items-center justify-between px-6 py-4 border-b ">
-      <h2 class="text-lg font-semibold text-white">
-        Información del archivo
-      </h2>
+        <FileInfo  v-if="seccionVisible==='info_file'"   :nodeSelec="nodeSelec"  @cerrarPanelDerecho="cerrarPanelDerecho"/>
+        <UloadFile v-if="seccionVisible==='upload_file'" :nodeSelec="nodeSelec"/>
+        </div>       
+      </transition>  
+      </div>
+      <!-- MAIN -->
+      <main class="flex-1 pb-8">
 
-      <button
-        @click="panelDerechoVisible = false"
-        class="w-8 h-8 flex items-center justify-center
-               rounded-lg hover:bg-gray-200 transition"
-      >
-        ✕
-      </button>
-    </div>
+        <div class="mt-4">
 
-    <!-- CONTENIDO -->
-    <div class="flex-1 overflow-y-auto p-5 space-y-3">
+          <div class="mx-auto px-6 sm:px-4 lg:px-5  ">
 
-    -{{ nodeSelec }}-
- 
-    </div>
+            <!-- CONTENT -->
 
-    <!-- FOOTER -->
-    <div class="border-t p-4  bg-slate-950/70 ">
-      <button
-        @click="panelDerechoVisible = false"
-        class="w-full py-2 rounded-xl
-               bg-gray-200 hover:bg-gray-300
-               text-gray-700 transition"
-      >
-        Cerrar
-      </button>
-    </div>
-
-  </div>
-</transition>
-  <!-- MAIN -->
-  <main class="flex-1 pb-8">
-
-    <div class="mt-4">
-
-      <div class="mx-auto px-6 sm:px-4 lg:px-5  ">
-     
-        <!-- CONTENT -->
-     
-          <ListaCarpetasDrive v-if="pantalla == 2" />
+            <ListaCarpetasDrive v-if="pantalla == 2" @showPanelBusqueda="showPanelBusqueda" />
 
 
             <div v-if="pantalla == 3" class="rounded-3xl  border border-white/5   bg-white/[0.02]
@@ -310,10 +350,10 @@
 
             </div>
 
-   
-      </div>
 
-    </div>
+          </div>
+
+        </div>
 
         <!-- OFFLINE -->
         <div v-if="isOnline == false" class="sticky bottom-0
@@ -325,10 +365,11 @@
           <p>Sin conexión a la red</p>
         </div>
 
-  
 
-  </main>
 
+      </main>
+
+   
   <!-- FOOTER -->
   <footer
     class="px-5 py-3
@@ -372,6 +413,8 @@ import ModalErrorAcceso from "./modal/ModalErrorAcceso.vue";
 import ModalServiceUnavailable from "./modal/ModalServiceUnavailable.vue"
 import IndexaCarpetasDrive from "./IndexaCarpetasDrive.vue"
 import ListaCarpetasDrive from "./ListaCarpetasDrive.vue" 
+import FileInfo from "./FileInfo.vue"
+import UloadFile from "./UloadFile.vue"
 import {
    Dialog,
   DialogPanel,
@@ -411,7 +454,9 @@ export default
     ModalServiceUnavailable,
     LogoRwc,
     IndexaCarpetasDrive, 
-    ListaCarpetasDrive
+    ListaCarpetasDrive,
+    FileInfo,
+    UloadFile
   },
  
   created() {
@@ -522,9 +567,14 @@ export default
       } catch (e) {
         console.error("Credenciales inválidas ❌",e);
       }
+    },
+ 
+    showPanelBusqueda(valor){
+        this.showBusqueda = valor;
+    },
+    cerrarPanelDerecho(){
+      this.panelDerechoVisible = false
     }
- 
- 
 
   },
 
@@ -575,16 +625,19 @@ export default
       showModalServiceUnavailable:false,
       showModalErrorAcceso:false,
       message:false,
+      showBusqueda:false,
+      resultados_busqueda: []
    
     };
   },
 
-  computed: {},
+
   setup() {
     const isSmallScreen = ref(window.innerWidth <= 768);
     const isPortrait = ref(window.matchMedia("(orientation: portrait)").matches);
     const panelDerechoVisible = ref(false)
     const nodeSelec = ref({})
+    const seccionVisible = ref(false)
 
     const updateScreenSize = () => {
       isSmallScreen.value = window.innerWidth <= 768;
@@ -602,9 +655,13 @@ export default
       panelDerechoVisible.value = valor
     }
     const selectNode=(valor)=>{
+      console.log('-->', valor)    
       nodeSelec.value=valor
     }
-
+    const selectSeccion=(valor)=>{
+          console.log('-->', valor)   
+      seccionVisible.value=valor
+    }
     onMounted(() => {
       window.addEventListener("resize", updateAll);
       window.addEventListener("orientationchange", updateAll);
@@ -618,10 +675,11 @@ export default
     provide('panel', {
       visible: panelDerechoVisible,
       setVisible: togglePanelDerecho,
-      setNode:selectNode
+      setNode:selectNode,
+      seccionVisible: selectSeccion
     })
 
-    return { isSmallScreen, isPortrait,panelDerechoVisible, nodeSelec };
+    return { isSmallScreen, isPortrait,panelDerechoVisible, nodeSelec,seccionVisible };
   },
    watch: {
       nodeSelec(value){

@@ -63,9 +63,11 @@
                px-4 py-2 rounded-xl
                border border-emerald-400/20
                bg-emerald-500/10">
-   <div>
- <button @click="listar"
-  class="flex items-center gap-2
+        
+         <div class="flex items-center gap-2">
+ 
+ 
+       <button @click="showPanelBusqueda" class="flex items-center gap-2
          px-4 py-2 rounded-xl
          bg-cyan-500/10
          border border-cyan-400/20
@@ -73,54 +75,51 @@
          hover:bg-cyan-500/20
          hover:border-cyan-300/40
          transition-all duration-200
-         font-mono text-sm"
->
+         font-mono text-sm">
 
-  <!-- REFRESH ICON -->
-  <svg
-    class="w-5 h-5 hover:rotate-180 transition-transform duration-500"
-    fill="none"
-    stroke="currentColor"
-    stroke-width="1.8"
-    viewBox="0 0 24 24"
-  >
+            <!-- SEARCH ICON -->
+            <svg class="w-5 h-5 hover:scale-110 transition-transform duration-300" fill="none" stroke="currentColor"
+              stroke-width="1.8" viewBox="0 0 24 24">
+              <circle cx="11" cy="11" r="6" stroke-linecap="round" stroke-linejoin="round" />
 
-    <path
-      stroke-linecap="round"
-      stroke-linejoin="round"
-      d="M4 4v6h6"
-    />
+              <path stroke-linecap="round" stroke-linejoin="round" d="M20 20l-4.2-4.2" />
+            </svg>
+          </button>
 
-    <path
-      stroke-linecap="round"
-      stroke-linejoin="round"
-      d="M20 20v-6h-6"
-    />
+          <button @click="listar" class="flex items-center gap-2
+         px-4 py-2 rounded-xl
+         bg-cyan-500/10
+         border border-cyan-400/20
+         text-cyan-300
+         hover:bg-cyan-500/20
+         hover:border-cyan-300/40
+         transition-all duration-200
+         font-mono text-sm">
 
-    <path
-      stroke-linecap="round"
-      stroke-linejoin="round"
-      d="M20 9a8 8 0 00-13.66-4.66L4 6"
-    />
+            <!-- REFRESH ICON -->
+            <svg class="w-5 h-5 hover:rotate-180 transition-transform duration-500" fill="none" stroke="currentColor"
+              stroke-width="1.8" viewBox="0 0 24 24">
 
-    <path
-      stroke-linecap="round"
-      stroke-linejoin="round"
-      d="M4 15a8 8 0 0013.66 4.66L20 18"
-    />
+              <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v6h6" />
 
-  </svg>
+              <path stroke-linecap="round" stroke-linejoin="round" d="M20 20v-6h-6" />
 
-   
+              <path stroke-linecap="round" stroke-linejoin="round" d="M20 9a8 8 0 00-13.66-4.66L4 6" />
 
-</button>
-          </div>
-      
+              <path stroke-linecap="round" stroke-linejoin="round" d="M4 15a8 8 0 0013.66 4.66L20 18" />
+
+            </svg>
+
+
+
+          </button>
+        </div>
+
         <div class="w-2 h-2 rounded-full
                  bg-emerald-400
                  animate-pulse"></div>
 
-                 
+
 
         <span class="text-xs uppercase tracking-[0.2em]
                  text-emerald-300 font-mono">
@@ -134,7 +133,7 @@
     <!-- BODY -->
     <div class="relative z-10 p-1">
 
-      
+
 
       <!-- TREE PANEL -->
       <div class="rounded-1xl  border border-white/10
@@ -144,8 +143,8 @@
         <!-- TITLE -->
         <div class="flex items-center gap-3 mb-2">
 
-         
-       
+
+
         </div>
 
         <!-- TREE -->
@@ -176,7 +175,7 @@
 import api from "@/api/axios";
 import DriveTree from './DriveTree.vue'
 export default {
-
+  emits:['showPanelBusqueda'],
   data() {
     return {
       data: []
@@ -191,11 +190,11 @@ export default {
 
       // validar array
       if (!Array.isArray(nodes)) return;
-    
+
       // ordenar actual nivel
       nodes.sort((a, b) =>
-        a.name.localeCompare(
-          b.name,
+        b.name.localeCompare(
+          a.name,
           'es',
           { sensitivity: 'base' }
         )
@@ -205,7 +204,7 @@ export default {
       nodes.forEach(node => {
 
         if (node.children && node.children.length > 0) {
-            console.log('tiene hijos')
+          console.log('tiene hijos')
           this.ordenarChildrenAscendente(node.children);
         }
 
@@ -227,6 +226,9 @@ export default {
         throw error;
       }
 
+    },
+    showPanelBusqueda(){
+      this.$emit('showPanelBusqueda',true);
     }
   },
   mounted() {

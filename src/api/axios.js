@@ -38,9 +38,9 @@ api.interceptors.response.use(
         // Pide un nuevo access token
        
   
-
+        console.log('llamando refresh token')
         const res = await axios.post(
-      `${process.env.VUE_APP_API_URL}/api/v1/token/refresh/`,
+      `${import.meta.env.VITE_DJANGO_API_URL}/api/v1/token/refresh/`,
       { refresh }
     )
         // Guarda el nuevo token

@@ -3,10 +3,7 @@
   <div class="node">
 
     <!-- FILA -->
-    <div
-      class="node-row"
-      @click="toggle"
-    >
+    <div  class="node-row text-lg"  @click="toggle" >
 
       <!-- ICON -->
       <div
@@ -34,57 +31,75 @@
           />
 
         </svg>
+        
+       
 
-        <!-- FILE -->
-        <svg
-          v-else
-          @click="handleClick(node)"
-          class="w-5 h-5"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="1.8"
-          viewBox="0 0 24 24"
-        >
+ <!-- PDF FILE -->
+<svg  v-else
+  @click="handleClick(node)"
+  class="w-24 h-24 text-red-600 cursor-pointer"
+  fill="none"
+  viewBox="0 0 24 24"
+>
+  <!-- Documento -->
+  <path
+    d="M7 3h7l5 5v13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z"
+    stroke="currentColor"
+    stroke-width="1.5"
+    fill="white"
+  />
 
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            d="M9 12h6"
-          />
+  <!-- Esquina doblada -->
+  <path
+    d="M14 3v5h5"
+    stroke="currentColor"
+    stroke-width="1.5"
+  />
 
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            d="M9 16h6"
-          />
-
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            d="M7 3h7l5 5v13a1 1 0 01-1 1H7a1 1 0 01-1-1V4a1 1 0 011-1z"
-          />
-
-        </svg>
- 
+  <!-- Texto PDF -->
+  <text
+    x="12"
+    y="17"
+    text-anchor="middle"
+    font-size="5"
+    font-weight="bold"
+    fill="currentColor"
+  >
+    PDF
+  </text>
+</svg>
       </div>
 
-      <!-- LINK -->
-      <a
-        :href="node.web_view_link"
-        target="_blank"
-        @click.stop
-        class="node-link"
-      >
-       {{ node.name }}
-      </a>
- 
+      {{ node.name }} 
+      
+      
     </div>
+     <div v-if="open && node.is_folder"  class="children  contextual">
+         
 
+         <div class="grid grid-cols-10 gap-3  ">
+
+  <div class="p-3 text-center rounded-xl  text-violet-200 font-medium hover:bg-blue-100 hover:text-black cursor-pointer transition"
+   @click="handleClickCustom(node,'upload_file')">
+    📤 Upload
+  </div>
+
+
+  <div class="p-3 text-center rounded-xl  text-violet-200 font-medium hover:bg-violet-100 0 hover:text-black  cursor-pointer transition">
+    ✏ Rename
+  </div> 
+
+    <div class="p-3 text-center rounded-xl  text-red-600 font-medium hover:bg-red-100 cursor-pointer transition">
+    🗑 Delete
+  </div>
+
+
+</div>
+  
+ 
+      </div>
     <!-- CHILDREN -->
-    <div
-      v-if="open && node.children?.length"
-      class="children"
-    >
+    <div  v-if="open && node.children?.length"   class="children" >
 
       <DriveNode
         v-for="child in node.children"
@@ -219,6 +234,17 @@
   border-left:
     1px dashed rgba(255,255,255,.10);
 }
+.contextual {
+  text-align: left;
+  margin-left: 18px;
+
+  padding-left: 16px;
+
+  border-left:
+    1px dashed rgba(255,255,255,.10);
+
+     
+}
 
 </style>
 <style scoped>
@@ -275,11 +301,17 @@ const toggle = () => {
 const panel = inject('panel')
 
 const handleClick = (node) => {
+ 
+  panel.setVisible(true)
+  panel.setNode(node)
+  panel.seccionVisible('info_file')
+}
+const handleClickCustom = (node,action) => {
   console.log(node)
   panel.setVisible(true)
   panel.setNode(node)
+  panel.seccionVisible(action)
 }
-
 // Proveemos tanto el estado como la función
 provide('nodo', {
   nodoSelec: nodoSelec,
