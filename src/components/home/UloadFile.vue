@@ -1,59 +1,226 @@
-<template>
-<div class="w-full h-full bg-white p-4">
-  <div class="uploader">
-    <!-- Zona de drag & drop y botones -->
-    <div
-      class="drop-zone"
-      :class="{ 'drag-over': dragOver }"
-      @dragover.prevent="dragOver = true"
-      @dragleave.prevent="dragOver = false"
-      @drop.prevent="handleDrop"
-    >
-      <p>Arrastra aquí archivos o carpetas</p>
-      <div class="buttons">
-        <button @click="triggerFileInput">📄 Seleccionar archivos</button>
-        <button @click="triggerFolderInput">📁 Seleccionar carpeta</button>
-        <button @click="pauseQueue" :disabled="isPaused">⏸️ Pausar</button>
-        <button @click="resumeQueue" :disabled="!isPaused">▶️ Reanudar</button>
-        <button @click="clearCompleted">🗑️ Limpiar completados</button>
+ <template>
+  <div class="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 p-6">
+    <div class="max-w-4xl mx-auto">
+      <!-- Header -->
+      <div class="text-center mb-2">
+        
+        <p class="text-slate-500">Arrastra archivos o carpetas para comenzar</p>
       </div>
-      <input ref="fileInput" type="file" multiple style="display: none" @change="handleFilesSelected" />
-      <input ref="folderInput" type="file" webkitdirectory multiple style="display: none" @change="handleFolderSelected" />
-    </div>
 
-    <!-- Indicador de preparación -->
-    <div v-if="isPreparing" class="preparing-indicator">
-      <div class="spinner"></div>
-      <span>Preparando estructura de carpetas en Google Drive...</span>
-    </div>
+      <!-- Zona de drag & drop -->
+      <div
+        class="relative border-2 border-dashed rounded-xl p-12 text-center transition-all duration-200 cursor-pointer"
+        :class="dragOver 
+          ? 'border-blue-500 bg-blue-50/50 scale-[1.01]' 
+          : 'border-slate-300 bg-white hover:border-slate-400 hover:bg-slate-50'"
+        @dragover.prevent="dragOver = true"
+        @dragleave.prevent="dragOver = false"
+        @drop.prevent="handleDrop"
+      >
+        <div class="flex flex-col items-center gap-4">
+          <div class="flex gap-4 text-4xl">
+            <span class="text-slate-400">📄</span>
+            <span class="text-slate-400">📁</span>
+          </div>
+          
+          <p class="text-slate-600">Arrastra aquí archivos o carpetas</p>
+          
+          <div class="flex gap-3 flex-wrap justify-center">
+            <button 
+              @click="triggerFileInput"
+              class="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-all duration-200 shadow-sm hover:shadow-md flex items-center gap-2"
+            >
+              <span>📄</span> Seleccionar archivos
+            </button>
+            <button 
+              @click="triggerFolderInput"
+              class="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg transition-all duration-200 shadow-sm hover:shadow-md flex items-center gap-2"
+            >
+              <span>📁</span> Seleccionar carpeta
+            </button>
+          </div>
 
-    <!-- Cola de subida -->
-    <div class="queue" v-if="queue.length">
-      <h3>Cola de subida ({{ queue.length }})</h3>
-      <div v-for="item in queue" :key="item.id" class="queue-item">
-        <div class="info">
-          <strong>{{ item.name }}</strong>
-          <span class="path">{{ item.relativePath || 'Archivo suelto' }}</span>
-          <span class="status" :class="item.status">{{ statusText(item.status) }}</span>
-          <div class="actions">
-            <button v-if="item.status === 'uploading'" @click="cancelUpload(item)">⛔ Cancelar</button>
-            <button v-if="item.status === 'pending'" @click="removeFromQueue(item)">❌ Eliminar</button>
-            <button v-if="item.status === 'error'" @click="retryUpload(item)">🔄 Reintentar</button>
+          <div class="flex gap-2 mt-2">
+            <button 
+              @click="pauseQueue" 
+              :disabled="isPaused"
+              class="px-4 py-2 bg-amber-500 hover:bg-amber-600 disabled:bg-amber-300 text-white rounded-lg transition-all duration-200 text-sm"
+            >
+              ⏸️ Pausar
+            </button>
+            <button 
+              @click="resumeQueue" 
+              :disabled="!isPaused"
+              class="px-4 py-2 bg-green-600 hover:bg-green-700 disabled:bg-green-300 text-white rounded-lg transition-all duration-200 text-sm"
+            >
+              ▶️ Reanudar
+            </button>
+            <button 
+              @click="clearCompletedAndErrors"
+              class="px-4 py-2 bg-slate-600 hover:bg-slate-700 text-white rounded-lg transition-all duration-200 text-sm flex items-center gap-1"
+            >
+              🗑️ Limpiar ({{ completedAndErrorsCount }})
+            </button>
           </div>
         </div>
-        <div class="progress-bar" v-if="item.status === 'uploading' || item.status === 'pending'">
-          <div class="progress" :style="{ width: item.progress + '%' }"></div>
-        </div>
-        <div class="error" v-if="item.error">{{ item.error }}</div>
+
+        <input ref="fileInput" type="file" multiple style="display: none" @change="handleFilesSelected" />
+        <input ref="folderInput" type="file" webkitdirectory multiple style="display: none" @change="handleFolderSelected" />
       </div>
-      <div class="total-progress" v-if="totalProgress > 0">
-        Progreso total: {{ totalProgress }}%
+
+      <!-- Indicador de preparación -->
+      <div v-if="isPreparing" class="fixed bottom-6 right-6 bg-blue-600 text-white px-5 py-3 rounded-xl shadow-lg flex items-center gap-3 animate-in slide-in-from-right">
+        <div class="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+        <span class="text-sm font-medium">Preparando estructura de carpetas...</span>
+      </div>
+
+      <!-- Cola de subida CON SCROLL -->
+      <div v-if="queue.length" class="mt-8">
+        <div class="flex items-center justify-between mb-4">
+          <h2 class="text-xl font-semibold text-slate-800">
+            Cola de subida
+            <span class="ml-2 px-2 py-0.5 bg-slate-200 rounded-full text-sm text-slate-600">{{ queue.length }}</span>
+          </h2>
+          <div v-if="totalProgress > 0" class="text-sm font-medium text-blue-600">
+            {{ totalProgress }}% completado
+          </div>
+        </div>
+
+        <!-- Contenedor con scroll vertical -->
+        <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+          <div class="max-h-96 overflow-y-auto">
+            <div class="divide-y divide-slate-100">
+              <div 
+                v-for="item in queue" 
+                :key="item.id" 
+                class="p-4 hover:bg-slate-50 transition-colors duration-150"
+              >
+                <div class="flex items-start justify-between gap-4 flex-wrap">
+                  <div class="flex-1 min-w-0">
+                    <div class="flex items-center gap-2 mb-1">
+                      <span class="text-xl">{{ item.relativePath ? '📁' : '📄' }}</span>
+                      <strong class="text-slate-800 truncate">{{ item.name }}</strong>
+                    </div>
+                    <div class="text-xs text-slate-400 truncate" v-if="item.relativePath">
+                      {{ item.relativePath }}
+                    </div>
+                    <div class="mt-2">
+                      <span 
+                        class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium"
+                        :class="{
+                          'bg-yellow-100 text-yellow-800': item.status === 'pending',
+                          'bg-blue-100 text-blue-800': item.status === 'uploading',
+                          'bg-green-100 text-green-800': item.status === 'completed',
+                          'bg-red-100 text-red-800': item.status === 'error',
+                          'bg-gray-100 text-gray-800': item.status === 'cancelled'
+                        }"
+                      >
+                        {{ statusText(item.status) }}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div class="flex gap-2">
+                    <button 
+                      v-if="item.status === 'uploading'" 
+                      @click="cancelUpload(item)"
+                      class="px-3 py-1.5 text-sm bg-red-50 hover:bg-red-100 text-red-600 rounded-lg transition-colors"
+                    >
+                      ⛔ Cancelar
+                    </button>
+                    <button 
+                      v-if="item.status === 'pending'" 
+                      @click="removeFromQueue(item)"
+                      class="px-3 py-1.5 text-sm bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg transition-colors"
+                    >
+                      ❌ Eliminar
+                    </button>
+                    <button 
+                      v-if="item.status === 'error'" 
+                      @click="retryUpload(item)"
+                      class="px-3 py-1.5 text-sm bg-emerald-50 hover:bg-emerald-100 text-emerald-600 rounded-lg transition-colors"
+                    >
+                      🔄 Reintentar
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Barra de progreso -->
+                <div v-if="item.status === 'uploading' || item.status === 'pending'" class="mt-3">
+                  <div class="bg-slate-100 rounded-full h-2 overflow-hidden">
+                    <div 
+                      class="h-full rounded-full transition-all duration-300"
+                      :class="item.status === 'uploading' ? 'bg-blue-500' : 'bg-yellow-500'"
+                      :style="{ width: item.progress + '%' }"
+                    ></div>
+                  </div>
+                  <div class="text-right text-xs text-slate-500 mt-1">{{ item.progress }}%</div>
+                </div>
+
+                <!-- Mensaje de error -->
+                <div v-if="item.error" class="mt-2 text-sm text-red-600 bg-red-50 rounded-lg p-2">
+                  {{ item.error }}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Barra de progreso total -->
+        <div v-if="totalProgress > 0" class="mt-6">
+          <div class="bg-slate-100 rounded-full h-3 overflow-hidden">
+            <div 
+              class="bg-gradient-to-r from-blue-500 to-emerald-500 h-full rounded-full transition-all duration-500"
+              :style="{ width: totalProgress + '%' }"
+            ></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Estado vacío -->
+      <div v-else class="mt-8 text-center py-12">
+        <div class="text-6xl mb-4 opacity-50">📤</div>
+        <p class="text-slate-400">No hay archivos en la cola</p>
       </div>
     </div>
-  </div>
   </div>
 </template>
 
+<style scoped>
+@keyframes slide-in-from-right {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.animate-in {
+  animation: slide-in-from-right 0.3s ease-out;
+}
+
+/* Scrollbar personalizado */
+.max-h-96::-webkit-scrollbar {
+  width: 8px;
+}
+
+.max-h-96::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+.max-h-96::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+
+.max-h-96::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+</style>
 <script setup>
 import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
 import api from "@/api/axios";
@@ -75,12 +242,32 @@ const API_PREPARE_ENDPOINT = '/api/v1/prepare-upload/'  // Nuevo endpoint
 const fileInput = ref(null)
 const folderInput = ref(null)
 const dragOver = ref(false)
-const queue = ref([])
-const isPaused = ref(false)
-const isPreparing = ref(false)  // Estado de preparación
-let activeUploads = 0
-let processingLoop = false
+// Estado reactivo (Vue refs)
+const queue = ref([]) // Cola de archivos a subir
+const isPaused = ref(false) // Control de pausa manual
+const isPreparing = ref(false)  // Indicador de preparación
+
+// Estado no-reactivo (variables normales)
+let activeUploads = 0  // Contador de subidas activas
+let processingLoop = false // Evita bucles múltiples
 let folderCache = new Map()  // Cache local: relativePath -> folder_id
+
+// Propiedades computadas
+const totalProgress = computed(() => {
+  if (queue.value.length === 0) return 0
+  
+  const total = queue.value.reduce((sum, item) => {
+    return sum + (item.progress || 0)
+  }, 0)
+  
+  return Math.floor(total / queue.value.length)
+})
+
+const completedAndErrorsCount = computed(() => {
+  return queue.value.filter(item => 
+    item.status === 'completed' || item.status === 'error'
+  ).length
+})
 
 // ---------- Funciones auxiliares ----------
 const generateId = () => Date.now() + '-' + Math.random().toString(36).substr(2, 9)
@@ -107,23 +294,25 @@ function isFileWithinLimit(file) {
 
 // ---------- NUEVO: Preparar carpeta en backend (UNA SOLA VEZ) ----------
 async function prepareFolder(relativePath) {
+  
   if (!relativePath) return props.nodeSelec?.drive_file_id
   
-  // Verificar caché local
+   // 1. Verificar caché local
   if (folderCache.has(relativePath)) {
     console.log(`♻️ Usando caché local para: ${relativePath}`)
-    return folderCache.get(relativePath)
+    return folderCache.get(relativePath) // ✅ Evita llamadas repetidas
   }
   
   isPreparing.value = true
   
   try {
+     // 2. Llamar al backend para crear/obtener la carpeta
     console.log(`📁 Preparando carpeta: ${relativePath}`)
     const response = await api.post(API_PREPARE_ENDPOINT, {
       folder_id: props.nodeSelec?.drive_file_id,
       relative_path: relativePath
     })
-    
+    // 3. Guardar en caché ♻️
     const folderId = response.data.folder_id
     folderCache.set(relativePath, folderId)
     console.log(`✅ Carpeta preparada: ${relativePath} -> ${folderId}`)
@@ -138,19 +327,20 @@ async function prepareFolder(relativePath) {
 
 // ---------- Procesamiento optimizado de cola ----------
 async function processQueue() {
-  if (processingLoop) return
+  if (processingLoop) return // Evita múltiples procesadores
   processingLoop = true
 
   while (true) {
+      // 1. Verificar pausa
     if (isPaused.value) {
       await new Promise(resolve => setTimeout(resolve, 500))
       continue
     }
-
+ // 2. Obtener archivos pendientes
     const pendingItems = queue.value.filter(item => item.status === 'pending' && item.file)
     if (pendingItems.length === 0) break
 
-    // 🔥 OPTIMIZACIÓN: Preparar carpetas ÚNICAS primero
+    // 🔥 3. OPTIMIZACIÓN: Preparar carpetas ÚNICAS primero
     const uniquePaths = [...new Set(pendingItems.map(item => item.relativePath))]
     
     for (const path of uniquePaths) {
@@ -186,7 +376,7 @@ async function processQueue() {
       }
     }
 
-    // Lanzar subidas
+    // 4. Lanzar subidas (máximo MAX_CONCURRENT_UPLOADS)
     const stillPending = queue.value.filter(item => item.status === 'pending' && item.file)
     while (activeUploads < MAX_CONCURRENT_UPLOADS && stillPending.length > 0) {
       const nextItem = stillPending.shift()
@@ -365,6 +555,13 @@ function resumeQueue() {
   processQueue()
 }
 
+async function clearCompletedAndErrors(){
+  queue.value = queue.value.filter(item => 
+    item.status !== 'completed' && item.status !== 'error'
+  )
+    await saveQueueToDB()
+}
+
 // ---------- Manejadores de UI ----------
 function triggerFileInput() { fileInput.value.click() }
 function triggerFolderInput() { folderInput.value.click() }
@@ -421,12 +618,7 @@ async function handleDrop(event) {
   if (files.length) addFilesToQueue(files)
 }
 
-// ---------- Progreso total ----------
-const totalProgress = computed(() => {
-  if (queue.value.length === 0) return 0
-  const total = queue.value.reduce((sum, item) => sum + item.progress, 0)
-  return Math.round(total / queue.value.length)
-})
+ 
 
 // ---------- IndexedDB (persistencia) ----------
 const DB_NAME = 'UploadQueueDB'
@@ -496,54 +688,3 @@ onBeforeUnmount(async () => {
 })
 </script>
 
-<style scoped>
-/* Estilos existentes + nuevos */
-.uploader { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; }
-.drop-zone { border: 2px dashed #aaa; border-radius: 8px; padding: 2rem; text-align: center; background: #f9f9f9; transition: background 0.2s; }
-.drop-zone.drag-over { background: #e1f5fe; border-color: #2196f3; }
-.buttons button { margin: 0.5rem; padding: 0.5rem 1rem; background: #1976d2; color: white; border: none; border-radius: 4px; cursor: pointer; }
-.queue { margin-top: 2rem; }
-.queue-item { border: 1px solid #ddd; border-radius: 4px; padding: 0.75rem; margin-bottom: 0.75rem; }
-.info { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; }
-.path { font-size: 0.8rem; color: #666; }
-.status { font-size: 0.8rem; font-weight: bold; }
-.status.pending { color: #ff9800; }
-.status.uploading { color: #2196f3; }
-.status.completed { color: #4caf50; }
-.status.error { color: #f44336; }
-.status.cancelled { color: #9e9e9e; }
-.actions button { margin-left: 8px; background: #e0e0e0; border: none; border-radius: 4px; cursor: pointer; }
-.progress-bar { background: #e0e0e0; border-radius: 4px; height: 8px; overflow: hidden; margin-top: 8px; }
-.progress { background: #4caf50; height: 100%; width: 0%; transition: width 0.3s; }
-.error { color: red; font-size: 0.8rem; margin-top: 4px; }
-.total-progress { margin-top: 1rem; font-weight: bold; text-align: center; }
-
-/* Nuevos estilos */
-.preparing-indicator {
-  position: fixed;
-  top: 20px;
-  right: 20px;
-  background: #2196f3;
-  color: white;
-  padding: 10px 20px;
-  border-radius: 8px;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  z-index: 1000;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.2);
-}
-
-.spinner {
-  width: 20px;
-  height: 20px;
-  border: 3px solid rgba(255,255,255,0.3);
-  border-radius: 50%;
-  border-top-color: white;
-  animation: spin 1s ease-in-out infinite;
-}
-
-@keyframes spin {
-  to { transform: rotate(360deg); }
-}
-</style>
