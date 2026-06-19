@@ -3,12 +3,11 @@
   <div class="node">
 
     <!-- FILA -->
-    <div  class="node-row text-lg"  @click="toggle" >
-
+    <div  class="node-row text-sm"  @click="toggle" >
+   ({{ area_id }})
       <!-- ICON -->
       <div
-        class="folder-icon"
-        :class="{
+        class="folder-icon "  :class="{
           'folder-open': open && node.is_folder,
           'file-icon': !node.is_folder
         }"
@@ -17,7 +16,7 @@
         <!-- FOLDER -->
         <svg
           v-if="node.is_folder"
-          class="w-5 h-5"
+         
           fill="none"
           stroke="currentColor"
           stroke-width="1.8"
@@ -37,7 +36,7 @@
  <!-- PDF FILE -->
 <svg  v-else
   @click="handleClick(node)"
-  class="w-24 h-24 text-red-600 cursor-pointer"
+  class="text-red-600 cursor-pointer"
   fill="none"
   viewBox="0 0 24 24"
 >
@@ -70,26 +69,26 @@
 </svg>
       </div>
 
-      {{ node.name }} 
+    {{ node.name }} 
       
       
     </div>
      <div v-if="open && node.is_folder"  class="children  contextual">
          
 
-         <div class="grid grid-cols-10 gap-3  ">
+         <div class="grid grid-cols-2 gap-2  ">
 
   <div class="p-3 text-center rounded-xl  text-violet-200 font-medium hover:bg-blue-100 hover:text-black cursor-pointer transition"
    @click="handleClickCustom(node,'upload_file')">
     📤 Upload
   </div>
 
-
+<!--
   <div class="p-3 text-center rounded-xl  text-violet-200 font-medium hover:bg-violet-100 0 hover:text-black  cursor-pointer transition">
     ✏ Rename
-  </div> 
+  </div> -->
 
-    <div class="p-3 text-center rounded-xl  text-red-600 font-medium hover:bg-red-100 cursor-pointer transition">
+    <div @click="handleClick(node)" class="p-3 text-center rounded-xl  text-red-600 font-medium hover:bg-red-100 cursor-pointer transition">
     🗑 Delete
   </div>
 
@@ -105,12 +104,68 @@
         v-for="child in node.children"
         :key="child.id"
         :node="child"
+        :area_id="area_id"
       />
 
     </div>
 
   </div>
 </template>
+
+
+<!-- DriveNode.vue -->
+ 
+<script setup>
+import { ref , inject, provide } from 'vue'
+import DriveNode from './DriveNode.vue'
+
+const nodoSelec = ref({});
+
+const selecNodo = (valor) => {
+    nodoSelec.value = valor;
+ };
+
+const props = defineProps({
+  node: {
+    type: Object,
+    required: true
+  },
+  area_id:{
+    type:Number,
+  }
+})
+
+const open = ref(false)
+
+const toggle = () => {
+  if (props.node.is_folder) {
+    open.value = !open.value
+  }
+}
+
+const panel = inject('panel')
+
+const handleClick = (node) => {
+ 
+  panel.setVisible(true)
+  panel.setNode(node)
+  panel.seccionVisible('info_file')
+  panel.setAreaSelec(props.area_id)
+}
+const handleClickCustom = (node,action) => {
+  
+  panel.setVisible(true)
+  panel.setNode(node)
+  panel.seccionVisible(action)
+  panel.setAreaSelec(props.area_id)  
+}
+// Proveemos tanto el estado como la función
+provide('nodo', {
+  nodoSelec: nodoSelec,
+  selecNodo: selecNodo
+})
+
+</script>
 
 <style scoped>
 
@@ -271,52 +326,3 @@
   padding-left: 10px;
 }
 </style>
-<!-- DriveNode.vue -->
- 
-<script setup>
-import { ref , inject, provide } from 'vue'
-import DriveNode from './DriveNode.vue'
-
-const nodoSelec = ref({});
-
-const selecNodo = (valor) => {
-    nodoSelec.value = valor;
- };
-
-const props = defineProps({
-  node: {
-    type: Object,
-    required: true
-  }
-})
-
-const open = ref(false)
-
-const toggle = () => {
-  if (props.node.is_folder) {
-    open.value = !open.value
-  }
-}
-
-const panel = inject('panel')
-
-const handleClick = (node) => {
- 
-  panel.setVisible(true)
-  panel.setNode(node)
-  panel.seccionVisible('info_file')
-}
-const handleClickCustom = (node,action) => {
-  console.log(node)
-  panel.setVisible(true)
-  panel.setNode(node)
-  panel.seccionVisible(action)
-}
-// Proveemos tanto el estado como la función
-provide('nodo', {
-  nodoSelec: nodoSelec,
-  selecNodo: selecNodo
-})
-
-</script>
-

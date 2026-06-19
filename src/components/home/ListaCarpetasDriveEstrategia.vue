@@ -1,10 +1,10 @@
 <template>
  
  
-  <div class="ml-6   finance-panel relative overflow-hidden">
+  <div class="ml-1   finance-panel relative overflow-hidden">
 
      <div class="flex justify-between">
-      <span class="text-xs text-indigo-500 font-mono bg-indigo-50 px-3 py-1 rounded-full shadow-sm">&#60;Home/ListaCarpetasDrive.vue&#62;</span>
+      <span class="text-xs text-indigo-500 font-mono bg-indigo-50 px-3 py-1 rounded-full shadow-sm">&#60;Home/ListaCarpetasDriveEstrategia.vue&#62;</span>
     </div>
 
     <!-- GLOWS -->
@@ -42,7 +42,7 @@
         <div>
 
           <h1 class="text-2xln font-semiboldn tracking-widen  text-white">
-            Finanzas
+            Estrategia
           </h1>
 
           <p class="text-sm
@@ -113,7 +113,7 @@
         </div>
 
         <div class="w-2 h-2 rounded-full
-                 bg-emerald-400
+                 bg-yellow-100
                  animate-pulse"></div>
 
 
@@ -151,7 +151,7 @@
                  bg-slate-950/40
                  p-4">
  
-          <DriveTree :nodes="data" :area_id="area_id"  />
+          <DriveTree :nodes="data" :area_id="area_id" />
 
         </div>
 
@@ -174,7 +174,9 @@ import DriveTree from './DriveTree.vue'
 
 // Props
 const props = defineProps({
- 
+  prop_area_id: {
+    type: Number
+  },
   prop_json_carpetas: {
     type: Object
   }
@@ -185,7 +187,7 @@ const emit = defineEmits(['showPanelBusqueda'])
 
 // Data
 const data = ref([])
-const area_id = ref(1)
+const area_id = ref(2)
 
 // Methods
 const ordenarChildrenAscendente = (nodes) => {

@@ -309,25 +309,27 @@
 </div>
 
  
-        <div  v-if="panelDerechoVisible">
+        <div  v-if="panelDerechoVisible"  >
         <!-- OVERLAY -->
-
+ 
 
    
-        <div @click="panelDerechoVisible = false" class="fixed inset-0 z-40  "></div>
+        <div class="fixed inset-0 z-40  bg-black opacity-50"></div>
         <!-- PANEL LATERAL DERECHO -->
       <transition   enter-active-class="transition duration-300 ease-out" enter-from-class="translate-x-full opacity-0"
             enter-to-class="translate-x-0 opacity-100" leave-active-class="transition duration-200 ease-in"
             leave-from-class="translate-x-0 opacity-100" leave-to-class="translate-x-full opacity-0">
+
           <div class="fixed top-0 right-0 z-50
            h-full w-[680px]
-           bg-gray-600
+           bg-white
            shadow-2xl
            border-l border-gray-200
            flex flex-col">
-
-        <FileInfo  v-if="seccionVisible==='info_file'"   :nodeSelec="nodeSelec"  @cerrarPanelDerecho="cerrarPanelDerecho"/>
-        <UloadFile v-if="seccionVisible==='upload_file'" :nodeSelec="nodeSelec"/>
+-- {{ area_seleccionada_id }} --
+        <FileInfo  v-if="seccionVisible==='info_file'"   :nodeSelec="nodeSelec"  :area_id="area_seleccionada_id"   @cerrarPanelDerecho="cerrarPanelDerecho"/>
+        <UloadFile v-if="seccionVisible==='upload_file'" :nodeSelec="nodeSelec"   :area_id="area_seleccionada_id"   
+        @cerrarPanelDerecho="cerrarPanelDerecho"  @refreshTree="refreshTree"/>
         </div>       
       </transition>  
       </div>
@@ -337,19 +339,20 @@
         <div class="mt-4">
 
           <div class="mx-auto px-6 sm:px-4 lg:px-5  ">
+ 
+           <div v-if="pantalla == 2" class="flex items-center gap-4">
+               
+           <ListaCarpetasDrive
+            @showPanelBusqueda="showPanelBusqueda" 
+            
+            :prop_json_carpetas="data"/>
 
-            <!-- CONTENT -->
+          <ListaCarpetasDriveEstrategia
+            @showPanelBusqueda="showPanelBusqueda"   :prop_json_carpetas="data2"/>
+          </div>
 
-            <ListaCarpetasDrive v-if="pantalla == 2" @showPanelBusqueda="showPanelBusqueda" />
-
-
-            <div v-if="pantalla == 3" class="rounded-3xl  border border-white/5   bg-white/[0.02]
-                 backdrop-blur-xl   ml-6 shadow-[0_0_40px_rgba(0,0,0,.25)] 
-                  p-4 lg:p-6">
-              <IndexaCarpetasDrive />
-
-            </div>
-
+           <IndexaCarpetasDrive v-if="pantalla == 3" />
+        
 
           </div>
 
@@ -389,6 +392,7 @@
  <style scoped>
 @import "@/assets/css/tech-theme.css";
 </style>
+
 <script>
 import api from "@/api/axios";
 import i18n from '@/i18n';
@@ -413,6 +417,7 @@ import ModalErrorAcceso from "./modal/ModalErrorAcceso.vue";
 import ModalServiceUnavailable from "./modal/ModalServiceUnavailable.vue"
 import IndexaCarpetasDrive from "./IndexaCarpetasDrive.vue"
 import ListaCarpetasDrive from "./ListaCarpetasDrive.vue" 
+import ListaCarpetasDriveEstrategia from "./ListaCarpetasDriveEstrategia.vue";
 import FileInfo from "./FileInfo.vue"
 import UloadFile from "./UloadFile.vue"
 import {
@@ -427,268 +432,327 @@ import {
   
 } from "@headlessui/vue";
 
- 
 
-export default 
-{
-  components: 
+ 
+export default
   {
-    
-    Dialog,
-    DialogPanel,
- 
-    SideBarMovilCliente,
-    SideBarDesktopCliente,
-  
-  
-    
-    Menu,
-    MenuButton,
-    MenuItem,
-    MenuItems,
-    TransitionChild,
-    TransitionRoot,
-    // BellIcon,
-    XIcon,
-    ModalErrorAcceso,
-    ModalServiceUnavailable,
-    LogoRwc,
-    IndexaCarpetasDrive, 
-    ListaCarpetasDrive,
-    FileInfo,
-    UloadFile
-  },
- 
-  created() {
-    this.lang = i18n.global.locale.value;
- 
-    
-    if ( this.$store.state.tokens ) {
+    computed: {
+      vistaActual() 
+      {
+        switch (this.pantalla) {
+          case 2:
+            return {
+              component: ListaCarpetasDrive,
+              props: {
+                prop_area_id: this.area_id,
+                prop_json_carpetas: this.data
+              }
+            }
 
-      
-      router.push("/");
-      console.log("sin definir status login");
-      return false;
-    } 
-    
+          case 3:
+            return {
+              component: IndexaCarpetasDrive,
+              props: {}
+            }
 
-    this.checkInternet();
-    window.addEventListener("online", this.checkInternet);
-    window.addEventListener("offline", () => (this.isOnline = false));
-  },
-  beforeMount(){
+          default:
+            return null
+        }
+      }
+    },
+    components:
+    {
 
-    //console.log('user id',this.$store.state.auth.userLogin.id )
-    if ( typeof(this.$store.state.auth.userLogin.id) === "undefined" || this.$store.state.auth.userLogin.id == 0 ) {
-      
-       
-      console.log("sin definir status login");
-      location.href="/";
-      return false;
-    }
+      Dialog,
+      DialogPanel,
 
-  },
-  mounted() {
-  
-    //console.log('user id',this.$store.state.auth.userLogin.id )
-    if ( typeof(this.$store.state.auth.userLogin.id) === "undefined" || this.$store.state.auth.userLogin.id == 0 ) {
-      
-       
-      console.log("sin definir status login");
-      location.href="/";
-      return false;
-    }
-    
-   // this.user = this.$store.state.login.userLogin;
-    //this.razonSocial =  this.user.info.razonSocial;
-    this.pantalla = 2;
+      SideBarMovilCliente,
+      SideBarDesktopCliente,
 
-    if (this.datosUsuario.rol !== "Administrador") {
-      this.adminNavigation = [];
-    }
-    
-  
-  },
-  beforeUnmount() {
-    window.removeEventListener("online", this.checkInternet);
-    window.removeEventListener("offline", () => (this.isOnline = false));
-  },
-  methods: {
-    ...mapActions("divisiones", ["getDivisionesApi"]),
-    vertest(){
+
+
+      Menu,
+      MenuButton,
+      MenuItem,
+      MenuItems,
+      TransitionChild,
+      TransitionRoot,
+      // BellIcon,
+      XIcon,
+      ModalErrorAcceso,
+      ModalServiceUnavailable,
+      LogoRwc,
+      IndexaCarpetasDrive,
+      ListaCarpetasDrive,
+      ListaCarpetasDriveEstrategia,
+      FileInfo,
+      UloadFile,
+
+    },
+
+    created() {
+      this.lang = i18n.global.locale.value;
+
+
+      if (this.$store.state.tokens) {
+
+
+        router.push("/");
+        console.log("sin definir status login");
+        return false;
+      }
+
+
+      this.checkInternet();
+      window.addEventListener("online", this.checkInternet);
+      window.addEventListener("offline", () => (this.isOnline = false));
+    },
+    beforeMount() {
+
+      //console.log('user id',this.$store.state.auth.userLogin.id )
+      if (typeof (this.$store.state.auth.userLogin.id) === "undefined" || this.$store.state.auth.userLogin.id == 0) {
+
+
+        console.log("sin definir status login");
+        location.href = "/";
+        return false;
+      }
+
+    },
+    mounted() {
+
+      //console.log('user id',this.$store.state.auth.userLogin.id )
+      if (typeof (this.$store.state.auth.userLogin.id) === "undefined" || this.$store.state.auth.userLogin.id == 0) {
+
+
+        console.log("sin definir status login");
+        location.href = "/";
+        return false;
+      }
+
+      // this.user = this.$store.state.login.userLogin;
+      //this.razonSocial =  this.user.info.razonSocial;
+      this.pantalla = 2;
+
+      if (this.datosUsuario.rol !== "Administrador") {
+        this.adminNavigation = [];
+      }
+
+      this.listarcarpetas(1)
+      this.listarcarpetas(2)
+    },
+    beforeUnmount() {
+      window.removeEventListener("online", this.checkInternet);
+      window.removeEventListener("offline", () => (this.isOnline = false));
+    },
+    methods: {
+      ...mapActions("divisiones", ["getDivisionesApi"]),
+      vertest() {
         router.push("/testmedicion")
       },
-    async checkInternet() {
-      try {
-       
-        await fetch("https://www.google.cl/", { mode: "no-cors" });
-        this.isOnline = true;
-      } catch (error) {
-        this.isOnline = false;
-      }
-    },
-    
+      async checkInternet() {
+        try {
 
-    
-    loadModalErrorAcceso(valor){
-      console.log('loadModalUsuarios')
-      this.showModalErrorAcceso = valor;
-    },
-    loadModalServiceUnavailable(valor){
-   
-      console.log('showModalServiceUnavailable')
-      this.showModalServiceUnavailable = valor;
-    },
+          await fetch("https://www.google.cl/", { mode: "no-cors" });
+          this.isOnline = true;
+        } catch (error) {
+          this.isOnline = false;
+        }
+      },
+
+
+
+      loadModalErrorAcceso(valor) {
+        console.log('loadModalUsuarios')
+        this.showModalErrorAcceso = valor;
+      },
+      loadModalServiceUnavailable(valor) {
+
+        console.log('showModalServiceUnavailable')
+        this.showModalServiceUnavailable = valor;
+      },
+
+      loadFormCliente() {
+        this.pantalla = 1;
+      },
+      chgPantalla(f) {
+
+        this.pantalla = f.id;
+
+        this.sidebarOpen = false;
+      },
  
-    loadFormCliente() {
-      this.pantalla = 1;
-    },
-    chgPantalla(f) {
-       
-      this.pantalla = f.id;
- 
-      this.sidebarOpen = false;
-    },
- 
-    async getFileDocument(){
-     try{      
-        let data = { "file_id": this.nodeSelec.drive_file_id };
-        const response = await api.post("api/v1/filedocument/", data,{
-             headers: {
-            "Content-Type": "application/json",
-           
-          },
+
+      showPanelBusqueda(valor) {
+        this.showBusqueda = valor;
+      },
+      cerrarPanelDerecho() {
+        this.panelDerechoVisible = false
+        this.listarcarpetas(this.area_seleccionada_id)
+      },
+      refreshTree() {
+        
+        this.listarcarpetas(this.area_seleccionada_id)
+      },
+      async listarcarpetas(area_id) {
+        try {
+
+          const r = await api.get(`drive/tree/${area_id}/`);
+
+          if (area_id==1){
+          this.data = r.data
+          this.ordenarChildrenAscendente(this.data)
+          }
+
+          if (area_id==2){
+          this.data2 = r.data
+          this.ordenarChildrenAscendente(this.data2)
+          }
+
+        } catch (error) {
+          console.error("error obteniendo arbol", error)
+          throw error;
+        }
+
+      },
+      ordenarChildrenAscendente(nodes) {
+
+        // validar array
+        if (!Array.isArray(nodes)) return;
+
+        // ordenar actual nivel
+        nodes.sort((a, b) =>
+          b.name.localeCompare(
+            a.name,
+            'es',
+            { sensitivity: 'base' }
+          )
+        );
+
+        // recorrer hijos recursivamente
+        nodes.forEach(node => {
+
+          if (node.children && node.children.length > 0) {
+            console.log('tiene hijos')
+            this.ordenarChildrenAscendente(node.children);
+          }
+
         });
 
-        if(response?.status ===200)
-        {
 
-        }
-      } catch (e) {
-        console.error("Credenciales inválidas ❌",e);
+      },
+    },
+
+    data() {
+      return {
+        centro: {},
+
+        imgbase64: '',
+        isOnline: false,
+        buildDate: import.meta.env.BUILD_DATE,
+
+        razonSocial: '',
+        tokenseguridad: "",
+        faenas: [{}],
+        datosUsuario: {},
+        pantalla: "",
+        rol: "",
+        selectDivisionesByIdFaena: 0,
+        nombreFaena: "",
+        navigation: [],
+        numRam: 0,
+        secondaryNavigation: [
+
+          { name: i18n.global.t('cerrarsesion'), href: "/logout" },
+        ],
+
+
+        statusStyles: {
+          success: "bg-green-100 text-green-800",
+          processing: "bg-yellow-100 text-yellow-800",
+          failed: "bg-gray-100 text-gray-800",
+        },
+        sidebarOpen: ref(false),
+        jsonObject: {
+          preference: {
+            "global": {
+              "mode": "",
+              "color": ""
+            },
+            items: [],
+            jaulas: []
+          }
+        },
+        vistaLive: false,
+        lang: '',
+        showFormCambiaPass: false,
+        showModalUsuarios: false,
+        showModalServiceUnavailable: false,
+        showModalErrorAcceso: false,
+        message: false,
+        showBusqueda: false,
+        resultados_busqueda: [],
+        area_id: 1,
+        data: {},
+        data2:{}
+      };
+    },
+
+
+    setup() {
+      const isSmallScreen = ref(window.innerWidth <= 768);
+      const isPortrait = ref(window.matchMedia("(orientation: portrait)").matches);
+      const panelDerechoVisible = ref(false)
+      const nodeSelec = ref({})
+      const seccionVisible = ref(false)
+      const area_seleccionada_id = ref(0)
+      const updateScreenSize = () => {
+        isSmallScreen.value = window.innerWidth <= 768;
+      };
+
+      const updateOrientation = () => {
+        isPortrait.value = window.matchMedia("(orientation: portrait)").matches;
+      };
+
+      const updateAll = () => {
+        updateScreenSize();
+        updateOrientation();
+      };
+      const togglePanelDerecho = (valor) => {
+        panelDerechoVisible.value = valor
       }
+      const selectNode = (valor) => {
+        console.log('-->', valor)
+        nodeSelec.value = valor
+      }
+      const selectSeccion = (valor) => {
+        console.log('-->', valor)
+        seccionVisible.value = valor
+      }
+      const selectAreaId=(valor)=>{
+         console.log('*****', valor)
+         area_seleccionada_id.value =valor
+      }
+      onMounted(() => {
+        window.addEventListener("resize", updateAll);
+        window.addEventListener("orientationchange", updateAll);
+      });
+
+      onUnmounted(() => {
+        window.removeEventListener("resize", updateAll);
+        window.removeEventListener("orientationchange", updateAll);
+      });
+
+      provide('panel', {
+        visible: panelDerechoVisible,
+        setVisible: togglePanelDerecho,
+        setNode: selectNode,
+        seccionVisible: selectSeccion,
+        setAreaSelec: selectAreaId
+      })
+
+      return { isSmallScreen, isPortrait, panelDerechoVisible, nodeSelec, seccionVisible,area_seleccionada_id };
     },
- 
-    showPanelBusqueda(valor){
-        this.showBusqueda = valor;
-    },
-    cerrarPanelDerecho(){
-      this.panelDerechoVisible = false
-    }
-
-  },
-
-  data() {
-    return {  
-      centro :{},
-      
-      imgbase64: '',
-      isOnline: false,
-      buildDate: import.meta.env.BUILD_DATE,
-   
-      razonSocial:'',
-      tokenseguridad: "",
-      faenas: [{}],
-      datosUsuario: {},
-      pantalla: "",
-      rol: "",
-      selectDivisionesByIdFaena: 0,
-      nombreFaena: "",
-      navigation: [],
-      numRam: 0,
-      secondaryNavigation: [ 
-       
-        {  name:  i18n.global.t('cerrarsesion'), href: "/logout"  },
-      ],
-      
-
-      statusStyles: {
-        success: "bg-green-100 text-green-800",
-        processing: "bg-yellow-100 text-yellow-800",
-        failed: "bg-gray-100 text-gray-800",
-      },
-      sidebarOpen: ref(false),
-      jsonObject: {
-        preference: {
-          "global": {
-            "mode": "",
-            "color": ""
-          },
-          items: [],
-          jaulas: []
-        }
-      },
-      vistaLive: false,
-      lang:'',
-      showFormCambiaPass:false,
-      showModalUsuarios:false,
-      showModalServiceUnavailable:false,
-      showModalErrorAcceso:false,
-      message:false,
-      showBusqueda:false,
-      resultados_busqueda: []
-   
-    };
-  },
-
-
-  setup() {
-    const isSmallScreen = ref(window.innerWidth <= 768);
-    const isPortrait = ref(window.matchMedia("(orientation: portrait)").matches);
-    const panelDerechoVisible = ref(false)
-    const nodeSelec = ref({})
-    const seccionVisible = ref(false)
-
-    const updateScreenSize = () => {
-      isSmallScreen.value = window.innerWidth <= 768;
-    };
-
-    const updateOrientation = () => {
-      isPortrait.value = window.matchMedia("(orientation: portrait)").matches;
-    };
-
-    const updateAll = () => {
-      updateScreenSize();
-      updateOrientation();
-    };
-    const togglePanelDerecho = (valor) => {
-      panelDerechoVisible.value = valor
-    }
-    const selectNode=(valor)=>{
-      console.log('-->', valor)    
-      nodeSelec.value=valor
-    }
-    const selectSeccion=(valor)=>{
-          console.log('-->', valor)   
-      seccionVisible.value=valor
-    }
-    onMounted(() => {
-      window.addEventListener("resize", updateAll);
-      window.addEventListener("orientationchange", updateAll);
-    });
-
-    onUnmounted(() => {
-      window.removeEventListener("resize", updateAll);
-      window.removeEventListener("orientationchange", updateAll);
-    });
     
-    provide('panel', {
-      visible: panelDerechoVisible,
-      setVisible: togglePanelDerecho,
-      setNode:selectNode,
-      seccionVisible: selectSeccion
-    })
-
-    return { isSmallScreen, isPortrait,panelDerechoVisible, nodeSelec,seccionVisible };
-  },
-   watch: {
-      nodeSelec(value){
-        console.log('cambioo nodeSelec',value)
-        if(value){
-          this.getFileDocument()
-        }
-      },
-      
-  },
-};
+  };
 </script>

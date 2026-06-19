@@ -1,4 +1,14 @@
  <template>
+ <div class="flex items-center justify-between px-6 py-4 border-b ">
+    <h2 class="text-lg font-semibold text-black">
+      Información del archivo
+    </h2>
+
+    <button @click="cerrar()" class="w-8 h-8 flex items-center justify-center text-black
+               rounded-lg hover:bg-gray-200 transition">
+      ✕
+    </button>
+  </div>
   <div class="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 p-6">
     <div class="max-w-4xl mx-auto">
       <!-- Header -->
@@ -23,7 +33,7 @@
             <span class="text-slate-400">📁</span>
           </div>
           
-          <p class="text-slate-600">Arrastra aquí archivos o carpetas</p>
+          
           
           <div class="flex gap-3 flex-wrap justify-center">
             <button 
@@ -40,7 +50,13 @@
             </button>
           </div>
 
-          <div class="flex gap-2 mt-2">
+        
+        </div>
+
+        <input ref="fileInput" type="file" multiple style="display: none" @change="handleFilesSelected" />
+        <input ref="folderInput" type="file" webkitdirectory multiple style="display: none" @change="handleFolderSelected" />
+      </div>
+  <div class="flex gap-2 mt-2">
             <button 
               @click="pauseQueue" 
               :disabled="isPaused"
@@ -62,12 +78,6 @@
               🗑️ Limpiar ({{ completedAndErrorsCount }})
             </button>
           </div>
-        </div>
-
-        <input ref="fileInput" type="file" multiple style="display: none" @change="handleFilesSelected" />
-        <input ref="folderInput" type="file" webkitdirectory multiple style="display: none" @change="handleFolderSelected" />
-      </div>
-
       <!-- Indicador de preparación -->
       <div v-if="isPreparing" class="fixed bottom-6 right-6 bg-blue-600 text-white px-5 py-3 rounded-xl shadow-lg flex items-center gap-3 animate-in slide-in-from-right">
         <div class="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
@@ -98,13 +108,13 @@
                 <div class="flex items-start justify-between gap-4 flex-wrap">
                   <div class="flex-1 min-w-0">
                     <div class="flex items-center gap-2 mb-1">
-                      <span class="text-xl">{{ item.relativePath ? '📁' : '📄' }}</span>
+                      <span class="text-xs">{{ item.relativePath ? '📁' : '📄' }}</span>
                       <strong class="text-slate-800 truncate">{{ item.name }}</strong>
                     </div>
                     <div class="text-xs text-slate-400 truncate" v-if="item.relativePath">
-                      {{ item.relativePath }}
+                    En: {{ item.relativePath }}
                     </div>
-                    <div class="mt-2">
+                    <div class="mt-1">
                       <span 
                         class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium"
                         :class="{
@@ -229,9 +239,13 @@ const props = defineProps({
   nodeSelec: {
     type: Object,
     required: true
+  },
+  area_id:{
+    type:Number,
+    required:true
   }
 })
-
+const emit = defineEmits(['cerrarPanelDerecho','refreshTree'])
 // ---------- Configuración ----------
 const MAX_CONCURRENT_UPLOADS = 3      // subidas simultáneas
 const MAX_FILE_SIZE_MB = 100          // 100 MB (ajustado a tu backend)
@@ -251,7 +265,7 @@ const isPreparing = ref(false)  // Indicador de preparación
 let activeUploads = 0  // Contador de subidas activas
 let processingLoop = false // Evita bucles múltiples
 let folderCache = new Map()  // Cache local: relativePath -> folder_id
-
+ 
 // Propiedades computadas
 const totalProgress = computed(() => {
   if (queue.value.length === 0) return 0
@@ -310,7 +324,8 @@ async function prepareFolder(relativePath) {
     console.log(`📁 Preparando carpeta: ${relativePath}`)
     const response = await api.post(API_PREPARE_ENDPOINT, {
       folder_id: props.nodeSelec?.drive_file_id,
-      relative_path: relativePath
+      relative_path: relativePath,
+      area_id: props.area_id
     })
     // 3. Guardar en caché ♻️
     const folderId = response.data.folder_id
@@ -377,6 +392,7 @@ async function processQueue() {
     }
 
     // 4. Lanzar subidas (máximo MAX_CONCURRENT_UPLOADS)
+    console.info('stillPending')
     const stillPending = queue.value.filter(item => item.status === 'pending' && item.file)
     while (activeUploads < MAX_CONCURRENT_UPLOADS && stillPending.length > 0) {
       const nextItem = stillPending.shift()
@@ -392,6 +408,7 @@ async function processQueue() {
     await new Promise(resolve => setTimeout(resolve, 200))
   }
   processingLoop = false
+  emit('refreshTree')
 }
 
 // ---------- Subir archivo (usando folder preparado) ----------
@@ -420,6 +437,8 @@ async function uploadFile(item) {
   if (item.relativePath && !item.preparedFolderId) {
     formData.append('relativePath', item.relativePath)
   }
+
+  formData.append('area_id', props.area_id)
 
   try {
     const response = await api.post(API_ENDPOINT, formData, {
@@ -567,18 +586,21 @@ function triggerFileInput() { fileInput.value.click() }
 function triggerFolderInput() { folderInput.value.click() }
 
 function handleFilesSelected(event) {
+    console.log('handleFilesSelected')
   const files = Array.from(event.target.files)
   if (files.length) addFilesToQueue(files)
   event.target.value = ''
 }
 
 function handleFolderSelected(event) {
+  console.log('handleFolderSelected')
   const files = Array.from(event.target.files)
   if (files.length) addFilesToQueue(files)
   event.target.value = ''
 }
 
 async function handleDrop(event) {
+  console.log('handleDrop')
   dragOver.value = false
   const items = event.dataTransfer.items
   const files = []
@@ -617,7 +639,79 @@ async function handleDrop(event) {
   await Promise.all(entries.map(entry => traverseFileTree(entry)))
   if (files.length) addFilesToQueue(files)
 }
+ 
+function getQueueStatus() 
+{
+  const total = queue.value.length
+  const pending = queue.value.filter(item => item.status === 'pending').length
+  const uploading = queue.value.filter(item => item.status === 'uploading').length
+ 
+  // Calcular activos (pendientes + subiendo)
+  const active = pending + uploading
+  
+  
+  return {
+    total,
+    pending,
+    uploading,
+    active,
+    hasPending: active > 0
+  }
+}
+async function cerrar(){
+     
+    
+    // 1. PRIMERO: Verificar si hay subidas activas
+    const status = getQueueStatus()
+    
+    if (status.hasPending || status.uploading > 0) {
+      console.log(`⛔ Cancelando ${status.active} subidas activas...`)
+      
+      // 2. Cancelar TODAS las subidas activas
+      for (const item of queue.value) {
+        if (item.abortController) {
+          try {
+            item.abortController.abort()
+            console.log(`✅ Cancelado: ${item.name}`)
+          } catch (error) {
+            console.warn(`⚠️ Error cancelando ${item.name}:`, error)
+          }
+        }
+      }
+      
+      // 3. Esperar un momento para que las cancelaciones se procesen
+      await new Promise(resolve => setTimeout(resolve, 500))
+      
+      // 4. vaciar queue
+      queue.value = []  
+      
+       // 5. ✅ LIMPIAR BASE DE DATOS (IndexedDB)
+      try {
+        if (db) {
+          // Opción 1: Limpiar el store (mantiene la estructura)
+          const tx = db.transaction(STORE_NAME, 'readwrite')
+          const store = tx.objectStore(STORE_NAME)
+          await store.clear()
+          await tx.complete
+          console.log('🗑️ Store limpiado correctamente')
+        }
+      } catch (error) {
+        console.error('❌ Error limpiando DB:', error)
+      }
+      
+    }
+    
+    // 5. FINALMENTE: Cerrar la DB
+    if (db) {
+      db.close()
+      db = null
+      console.log('💾 DB cerrada correctamente')
+    }
 
+    emit('cerrarPanelDerecho')
+
+
+  }
  
 
 // ---------- IndexedDB (persistencia) ----------
@@ -657,6 +751,7 @@ async function saveQueueToDB() {
 
 async function loadQueueFromDB() {
   if (!db) return []
+  console.log('CARGANDO FILES DESDE DB ' + STORE_NAME)
   const tx = db.transaction(STORE_NAME, 'readonly')
   const store = tx.objectStore(STORE_NAME)
   const items = await new Promise((resolve) => {
@@ -676,7 +771,9 @@ async function loadQueueFromDB() {
 // ---------- Ciclo de vida ----------
 onMounted(async () => {
   db = await openDB()
+  console.info('mounted uploadFile.vue')
   const savedItems = await loadQueueFromDB()
+  console.log("savedItems:",savedItems.length)
   if (savedItems.length) {
     queue.value = savedItems
     processQueue()
@@ -684,7 +781,12 @@ onMounted(async () => {
 })
 
 onBeforeUnmount(async () => {
-  if (db) db.close()
+  if (db) {
+    db.close()
+    db = null
+    queue.value =[]
+    console.log('borrando db y queue')
+  }
 })
 </script>
 
