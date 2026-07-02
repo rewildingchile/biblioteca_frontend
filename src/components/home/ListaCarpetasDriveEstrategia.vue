@@ -1,15 +1,13 @@
 <template>
  
- 
-  <div class="ml-1   finance-panel relative overflow-hidden">
+<div class="ml-1   finance-panel-2 relative overflow-hidden">
 
-     <div class="flex justify-between">
-      <span class="text-xs text-indigo-500 font-mono bg-indigo-50 px-3 py-1 rounded-full shadow-sm">&#60;Home/ListaCarpetasDriveEstrategia.vue&#62;</span>
-    </div>
-
+  <div class="flex justify-between">
+      <span
+        class="text-xs text-indigo-500 font-mono bg-indigo-50 px-3 py-1 rounded-full shadow-sm">&#60;Home/ListaCarpetasDriveEstrategia.vue&#62;</span>
+    </div> 
     <!-- GLOWS -->
-    <div class="finance-glow finance-glow-cyan"></div>
-    <div class="finance-glow finance-glow-pink"></div>
+
 
     <!-- HEADER -->
     <div class="relative z-10
@@ -21,7 +19,7 @@
       <div class="flex items-center gap-4">
 
         <!-- ICON -->
-        <div class="w-14 h-14 rounded-2xl
+        <div class="w-12 h-12 rounded-2xl
                  bg-cyan-500/10
                  border border-cyan-400/20
                  flex items-center justify-center
@@ -41,15 +39,11 @@
         <!-- TITLE -->
         <div>
 
-          <h1 class="text-2xln font-semiboldn tracking-widen  text-white">
-            Estrategia
+          <h1 class="text-2xl  tracking-widen  text-white font-mono">
+            Conservación & Estrategia  
           </h1>
 
-          <p class="text-sm
-                   text-slate-400
-                   mt-1">
-            Google Drive · Unidad compartida
-          </p>
+          
 
         </div>
 
@@ -64,24 +58,7 @@
          <div class="flex items-center gap-2">
  
  
-       <button @click="showPanelBusqueda" class="flex items-center gap-2
-         px-4 py-2 rounded-xl
-         bg-cyan-500/10
-         border border-cyan-400/20
-         text-cyan-300
-         hover:bg-cyan-500/20
-         hover:border-cyan-300/40
-         transition-all duration-200
-         font-mono text-sm">
-
-            <!-- SEARCH ICON -->
-            <svg class="w-5 h-5 hover:scale-110 transition-transform duration-300" fill="none" stroke="currentColor"
-              stroke-width="1.8" viewBox="0 0 24 24">
-              <circle cx="11" cy="11" r="6" stroke-linecap="round" stroke-linejoin="round" />
-
-              <path stroke-linecap="round" stroke-linejoin="round" d="M20 20l-4.2-4.2" />
-            </svg>
-          </button>
+      
 
           <button @click="listar(area_id)" class="flex items-center gap-2
          px-4 py-2 rounded-xl
@@ -134,7 +111,7 @@
 
       <!-- TREE PANEL -->
       <div class="rounded-1xl  border border-white/10
-               bg-white/[0.03]   backdrop-blur-xl  p-0
+                p-0
                shadow-[0_0_40px_rgba(0,0,0,.25)]">
 
         <!-- TITLE -->
@@ -148,7 +125,7 @@
         <div class="overflow-auto
                  rounded-1xl
                  border border-white/5
-                 bg-slate-950/40
+               
                  p-4">
  
           <DriveTree :nodes="data" :area_id="area_id" />
@@ -160,8 +137,7 @@
     </div>
 
   </div>
-
-
+ 
 
 </template>
 <style scoped>
@@ -196,8 +172,8 @@ const ordenarChildrenAscendente = (nodes) => {
 
   // ordenar actual nivel
   nodes.sort((a, b) =>
-    b.name.localeCompare(
-      a.name,
+    a.name.localeCompare(
+      b.name,
       'es',
       { sensitivity: 'base' }
     )

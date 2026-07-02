@@ -1,5 +1,9 @@
  <template>
+       
  <div class="flex items-center justify-between px-6 py-4 border-b ">
+  <div class="flex justify-between">
+      <span class="text-xs text-indigo-500 font-mono bg-indigo-50 px-3 py-1 rounded-full shadow-sm">&#60;Home/Uload.vue&#62;</span>
+    </div>
     <h2 class="text-lg font-semibold text-black">
       Información del archivo
     </h2>
@@ -9,14 +13,10 @@
       ✕
     </button>
   </div>
-  <div class="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 p-6">
+  <div class="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 p-2">
     <div class="max-w-4xl mx-auto">
       <!-- Header -->
-      <div class="text-center mb-2">
-        
-        <p class="text-slate-500">Arrastra archivos o carpetas para comenzar</p>
-      </div>
-
+     
       <!-- Zona de drag & drop -->
       <div
         class="relative border-2 border-dashed rounded-xl p-12 text-center transition-all duration-200 cursor-pointer"
@@ -28,25 +28,22 @@
         @drop.prevent="handleDrop"
       >
         <div class="flex flex-col items-center gap-4">
-          <div class="flex gap-4 text-4xl">
-            <span class="text-slate-400">📄</span>
-            <span class="text-slate-400">📁</span>
-          </div>
+         
           
           
           
-          <div class="flex gap-3 flex-wrap justify-center">
+          <div class="flex gap-3 flex-wrap justify-center text-4xl">
             <button 
               @click="triggerFileInput"
               class="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-all duration-200 shadow-sm hover:shadow-md flex items-center gap-2"
             >
-              <span>📄</span> Seleccionar archivos
+              <span>📄</span>  
             </button>
             <button 
               @click="triggerFolderInput"
               class="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg transition-all duration-200 shadow-sm hover:shadow-md flex items-center gap-2"
             >
-              <span>📁</span> Seleccionar carpeta
+              <span>📁</span>  
             </button>
           </div>
 
@@ -62,32 +59,32 @@
               :disabled="isPaused"
               class="px-4 py-2 bg-amber-500 hover:bg-amber-600 disabled:bg-amber-300 text-white rounded-lg transition-all duration-200 text-sm"
             >
-              ⏸️ Pausar
+              ⏸️  
             </button>
             <button 
               @click="resumeQueue" 
               :disabled="!isPaused"
               class="px-4 py-2 bg-green-600 hover:bg-green-700 disabled:bg-green-300 text-white rounded-lg transition-all duration-200 text-sm"
             >
-              ▶️ Reanudar
+              ▶️  
             </button>
             <button 
               @click="clearCompletedAndErrors"
               class="px-4 py-2 bg-slate-600 hover:bg-slate-700 text-white rounded-lg transition-all duration-200 text-sm flex items-center gap-1"
             >
-              🗑️ Limpiar ({{ completedAndErrorsCount }})
+              🗑️  ({{ completedAndErrorsCount }})
             </button>
           </div>
       <!-- Indicador de preparación -->
       <div v-if="isPreparing" class="fixed bottom-6 right-6 bg-blue-600 text-white px-5 py-3 rounded-xl shadow-lg flex items-center gap-3 animate-in slide-in-from-right">
         <div class="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-        <span class="text-sm font-medium">Preparando estructura de carpetas...</span>
+        <span class="text-xs font-medium">Preparando estructura de carpetas...</span>
       </div>
 
       <!-- Cola de subida CON SCROLL -->
-      <div v-if="queue.length" class="mt-8">
-        <div class="flex items-center justify-between mb-4">
-          <h2 class="text-xl font-semibold text-slate-800">
+      <div v-if="queue.length" class="mt-1">
+        <div class="flex items-center justify-between mb-2 mt-2">
+          <h2 class="text-xs font-semibold text-slate-800">
             Cola de subida
             <span class="ml-2 px-2 py-0.5 bg-slate-200 rounded-full text-sm text-slate-600">{{ queue.length }}</span>
           </h2>
@@ -98,24 +95,20 @@
 
         <!-- Contenedor con scroll vertical -->
         <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
-          <div class="max-h-96 overflow-y-auto">
+          <div class="max-h-[32rem] overflow-y-auto">
             <div class="divide-y divide-slate-100">
               <div 
                 v-for="item in queue" 
                 :key="item.id" 
                 class="p-4 hover:bg-slate-50 transition-colors duration-150"
               >
-                <div class="flex items-start justify-between gap-4 flex-wrap">
+                <div class="flex items-start justify-between gap-2 flex-wrap">
                   <div class="flex-1 min-w-0">
-                    <div class="flex items-center gap-2 mb-1">
-                      <span class="text-xs">{{ item.relativePath ? '📁' : '📄' }}</span>
-                      <strong class="text-slate-800 truncate">{{ item.name }}</strong>
-                    </div>
-                    <div class="text-xs text-slate-400 truncate" v-if="item.relativePath">
-                    En: {{ item.relativePath }}
-                    </div>
-                    <div class="mt-1">
-                      <span 
+                    <div class="flex items-center gap-3 mb-1 text-xs">
+                      <span class="">{{ item.relativePath ? '📁' : '📄' }}</span>
+                      <strong class="text-slate-800 truncate">{{ item.name }}</strong>   En: {{ item.relativePath }}
+                   
+                    <span 
                         class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium"
                         :class="{
                           'bg-yellow-100 text-yellow-800': item.status === 'pending',
@@ -128,9 +121,11 @@
                         {{ statusText(item.status) }}
                       </span>
                     </div>
+                  
+                   
                   </div>
 
-                  <div class="flex gap-2">
+                  <div class="flex gap-1">
                     <button 
                       v-if="item.status === 'uploading'" 
                       @click="cancelUpload(item)"
@@ -683,8 +678,8 @@ async function cerrar(){
       await new Promise(resolve => setTimeout(resolve, 500))
       
       // 4. vaciar queue
-      queue.value = []  
-      
+      queue.value=[]
+      totalProgress.value=0
        // 5. ✅ LIMPIAR BASE DE DATOS (IndexedDB)
       try {
         if (db) {
@@ -700,7 +695,8 @@ async function cerrar(){
       }
       
     }
-    
+      clearCompletedAndErrors()
+      
     // 5. FINALMENTE: Cerrar la DB
     if (db) {
       db.close()
@@ -785,6 +781,7 @@ onBeforeUnmount(async () => {
     db.close()
     db = null
     queue.value =[]
+    totalProgress.value=0
     console.log('borrando db y queue')
   }
 })

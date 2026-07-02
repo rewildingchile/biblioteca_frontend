@@ -3,8 +3,8 @@
   <div class="node">
 
     <!-- FILA -->
-    <div  class="node-row text-sm"  @click="toggle" >
-   ({{ area_id }})
+    <div  class="node-row text-sm text-left text-"  @click="toggle" >
+    
       <!-- ICON -->
       <div
         class="folder-icon "  :class="{
@@ -14,6 +14,7 @@
       >
 
         <!-- FOLDER -->
+
         <svg
           v-if="node.is_folder"
          
@@ -33,29 +34,34 @@
         
        
 
- <!-- PDF FILE -->
-<svg  v-else
-  @click="handleClick(node)"
-  class="text-red-600 cursor-pointer"
+ 
+ <!--- DEPENDIENDO DE node.mime_type--> 
+ <!--  MOSTRAR SVG (pdf, imagen, word, )-->
+
+<div v-else >
+ 
+ 
+ 
+
+<!-- PDF -->
+<svg
+  v-if="node.mime_type.includes('pdf')"
+  @click="handleClick(node,'view')"
+  class="w-8 h-8 text-red-600 cursor-pointer hover:scale-110 transition"
   fill="none"
   viewBox="0 0 24 24"
 >
-  <!-- Documento -->
   <path
     d="M7 3h7l5 5v13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z"
     stroke="currentColor"
     stroke-width="1.5"
     fill="white"
   />
-
-  <!-- Esquina doblada -->
   <path
     d="M14 3v5h5"
     stroke="currentColor"
     stroke-width="1.5"
   />
-
-  <!-- Texto PDF -->
   <text
     x="12"
     y="17"
@@ -67,36 +73,152 @@
     PDF
   </text>
 </svg>
-      </div>
 
-    {{ node.name }} 
-      
-      
-    </div>
-     <div v-if="open && node.is_folder"  class="children  contextual">
-         
+<!-- Imagen -->
+<svg
+  v-else-if="node.mime_type.startsWith('image/')"
+  @click="handleClick(node,'view')"
+  class="w-8 h-8 text-sky-600 cursor-pointer hover:scale-110 transition"
+  fill="none"
+  viewBox="0 0 24 24"
+>
+  <rect
+    x="3"
+    y="5"
+    width="18"
+    height="14"
+    rx="2"
+    stroke="currentColor"
+    stroke-width="1.5"
+  />
+  <circle
+    cx="9"
+    cy="10"
+    r="2"
+    stroke="currentColor"
+    stroke-width="1.5"
+  />
+  <path
+    d="M5 17l5-5 3 3 3-2 3 4"
+    stroke="currentColor"
+    stroke-width="1.5"
+    fill="none"
+  />
+</svg>
 
-         <div class="grid grid-cols-2 gap-2  ">
+<!-- Word -->
+<svg
+  v-else-if="
+    node.mime_type.includes('word') ||
+    node.mime_type.includes('officedocument.wordprocessingml')
+  "
+  @click="handleClick(node,'view')"
+  class="w-8 h-8 text-blue-700 cursor-pointer hover:scale-110 transition"
+  fill="none"
+  viewBox="0 0 24 24"
+>
+  <path
+    d="M7 3h7l5 5v13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z"
+    stroke="currentColor"
+    stroke-width="1.5"
+    fill="white"
+  />
+  <path
+    d="M14 3v5h5"
+    stroke="currentColor"
+    stroke-width="1.5"
+  />
+  <text
+    x="12"
+    y="17"
+    text-anchor="middle"
+    font-size="5"
+    font-weight="bold"
+    fill="currentColor"
+  >
+    DOC
+  </text>
+</svg>
 
-  <div class="p-3 text-center rounded-xl  text-violet-200 font-medium hover:bg-blue-100 hover:text-black cursor-pointer transition"
+<!-- Excel -->
+<svg
+  v-else-if="
+    node.mime_type.includes('sheet') ||
+    node.mime_type.includes('spreadsheet')
+  "
+  @click="handleClick(node,'view')"
+  class="w-8 h-8 text-green-600 cursor-pointer hover:scale-110 transition"
+  fill="none"
+  viewBox="0 0 24 24"
+>
+  <path
+    d="M7 3h7l5 5v13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z"
+    stroke="currentColor"
+    stroke-width="1.5"
+    fill="white"
+  />
+  <path
+    d="M14 3v5h5"
+    stroke="currentColor"
+    stroke-width="1.5"
+  />
+  <text
+    x="12"
+    y="17"
+    text-anchor="middle"
+    font-size="5"
+    font-weight="bold"
+    fill="currentColor"
+  >
+    XLS
+  </text>
+</svg>
+
+<!-- Archivo genérico -->
+<svg
+  v-else
+  @click="handleClick(node,'view')"
+  class="w-8 h-8 text-slate-500 cursor-pointer hover:scale-110 transition"
+  fill="none"
+  viewBox="0 0 24 24"
+>
+  <path
+    d="M7 3h7l5 5v13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z"
+    stroke="currentColor"
+    stroke-width="1.5"
+    fill="white"
+  />
+  <path
+    d="M14 3v5h5"
+    stroke="currentColor"
+    stroke-width="1.5"
+  />
+</svg>
+</div>
+</div>
+
+    {{ node.name }}  
+<div v-if="is_admin" class="grid grid-cols-2 gap-1 ">  
+  <span v-if="!node.is_folder"  @click="handleClick(node,'info')">✏️</span> 
+  
+  <div v-if="node.parent_drive_file_id" @click="handleClick(node,'info')" class="px-2 text-center rounded-xl  text-red-100 font-medium hover:bg-blue-100 cursor-pointer transition">
+   🗑️
+  </div> 
+  <div  v-if="node.is_folder" class="p-1 text-center rounded-xl  text-violet-200 font-medium hover:bg-blue-100 hover:text-black cursor-pointer transition"
    @click="handleClickCustom(node,'upload_file')">
-    📤 Upload
+   ⬆️  
   </div>
-
-<!--
-  <div class="p-3 text-center rounded-xl  text-violet-200 font-medium hover:bg-violet-100 0 hover:text-black  cursor-pointer transition">
-    ✏ Rename
-  </div> -->
-
-    <div @click="handleClick(node)" class="p-3 text-center rounded-xl  text-red-600 font-medium hover:bg-red-100 cursor-pointer transition">
-    🗑 Delete
-  </div>
-
+</div>
+      
+</div>
+<div v-if="open && node.is_folder"  class="children  contextual">
+  <div class="grid grid-cols-2 gap-2  ">
+  
+ 
 
 </div>
   
- 
-      </div>
+</div>
     <!-- CHILDREN -->
     <div  v-if="open && node.children?.length"   class="children" >
 
@@ -118,6 +240,8 @@
 <script setup>
 import { ref , inject, provide } from 'vue'
 import DriveNode from './DriveNode.vue'
+
+const is_admin = ref(true)
 
 const nodoSelec = ref({});
 
@@ -145,11 +269,16 @@ const toggle = () => {
 
 const panel = inject('panel')
 
-const handleClick = (node) => {
+const handleClick = (node,action) => {
  
+  if (action==='info'){
   panel.setVisible(true)
+    panel.seccionVisible('info_file')
+  }else{
+      panel.seccionVisible('show_file')
+  }
+
   panel.setNode(node)
-  panel.seccionVisible('info_file')
   panel.setAreaSelec(props.area_id)
 }
 const handleClickCustom = (node,action) => {
@@ -186,7 +315,7 @@ provide('nodo', {
 
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 6px;
 
   padding: 10px 12px;
 
@@ -196,13 +325,11 @@ provide('nodo', {
 
   cursor: pointer;
 }
-
 .node-row:hover {
-
-  background: rgba(255,255,255,.04);
-  color: #000 !important;;
-  transform: translateX(2px);
+  background: rgba(212, 212, 211, 0.6);
+  color:black;
 }
+ 
 
 /* =========================
    ICON
@@ -251,30 +378,15 @@ provide('nodo', {
   border: 1px solid rgba(255,255,255,.08);
 
   color: #cbd5e1;
+   
 }
 
 /* =========================
    LINK
 ========================= */
 
-.node-link {
-
-  color: #ffcc00;
-
-  text-decoration: none;
-
-  font-size: 14px;
-
-  transition: all .2s ease;
-}
-
-.node-link:hover {
-
-  color: #000000;
-
-  text-shadow:
-    0 0 10px rgba(250,204,21,.45);
-}
+ 
+ 
 
 /* =========================
    CHILDREN
@@ -315,10 +427,7 @@ provide('nodo', {
   padding: 4px;
 }
 
-.node-row:hover {
-  background: #f3f3f3;
-  color:black;
-}
+
 
 .children {
   margin-left: 20px;

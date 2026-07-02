@@ -230,6 +230,7 @@
 
   </div>
 
+ 
 
 <!-- BUSQUEDA--> 
 <!-- Overlay --> 
@@ -308,55 +309,63 @@
 
 </div>
 
+     
+<PdfViewer   v-if="seccionVisible==='show_file' && pdfViewerVisible"   :nodeSelec="nodeSelec"  :area_id="area_seleccionada_id" @cerrarPdfViewer="pdfViewerVisible=false"  />
  
-        <div  v-if="panelDerechoVisible"  >
+ <div  v-if="panelDerechoVisible"  >
         <!-- OVERLAY -->
  
 
    
         <div class="fixed inset-0 z-40  bg-black opacity-50"></div>
+      
         <!-- PANEL LATERAL DERECHO -->
       <transition   enter-active-class="transition duration-300 ease-out" enter-from-class="translate-x-full opacity-0"
             enter-to-class="translate-x-0 opacity-100" leave-active-class="transition duration-200 ease-in"
             leave-from-class="translate-x-0 opacity-100" leave-to-class="translate-x-full opacity-0">
 
-          <div class="fixed top-0 right-0 z-50
-           h-full w-[680px]
-           bg-white
-           shadow-2xl
-           border-l border-gray-200
-           flex flex-col">
--- {{ area_seleccionada_id }} --
-        <FileInfo  v-if="seccionVisible==='info_file'"   :nodeSelec="nodeSelec"  :area_id="area_seleccionada_id"   @cerrarPanelDerecho="cerrarPanelDerecho"/>
-        <UloadFile v-if="seccionVisible==='upload_file'" :nodeSelec="nodeSelec"   :area_id="area_seleccionada_id"   
+        <div class="fixed top-0 right-0 z-50
+           h-full w-[720px] bg-white  shadow-2xl border-l border-gray-200  flex flex-col">
+        
+        <FileInfo v-if="seccionVisible==='info_file'"   
+        :nodeSelec="nodeSelec"  
+        :area_id="area_seleccionada_id"   
+        @cerrarPanelDerecho="cerrarPanelDerecho"/> 
+        
+        <UloadFile v-if="seccionVisible==='upload_file'" 
+        :nodeSelec="nodeSelec"   :area_id="area_seleccionada_id"   
         @cerrarPanelDerecho="cerrarPanelDerecho"  @refreshTree="refreshTree"/>
-        </div>       
+        
+
+
+      </div>       
       </transition>  
       </div>
       <!-- MAIN -->
       <main class="flex-1 pb-8">
 
-        <div class="mt-4">
+         
 
-          <div class="mx-auto px-6 sm:px-4 lg:px-5  ">
+         <div class="min-h-screen bg-gradient-to-br from-sky-200 via-blue-80 to-white  ">
  
-           <div v-if="pantalla == 2" class="flex items-center gap-4">
-               
-           <ListaCarpetasDrive
-            @showPanelBusqueda="showPanelBusqueda" 
-            
-            :prop_json_carpetas="data"/>
-
-          <ListaCarpetasDriveEstrategia
-            @showPanelBusqueda="showPanelBusqueda"   :prop_json_carpetas="data2"/>
+           <div v-if="pantalla == 2" class="flex items-start gap-2 p-12">
+          
+            <ListaCarpetasDrive  @showPanelBusqueda="showPanelBusqueda"  
+           :prop_json_carpetas="data"/>
+           <ListaCarpetasDriveEstrategia  @showPanelBusqueda="showPanelBusqueda"   
+           :prop_json_carpetas="data2"/>
+          
           </div>
 
            <IndexaCarpetasDrive v-if="pantalla == 3" />
-        
+          
+           <div v-if="pantalla==4">
+             <BuscarEnDrive />
+           </div>
 
           </div>
 
-        </div>
+         
 
         <!-- OFFLINE -->
         <div v-if="isOnline == false" class="sticky bottom-0
@@ -420,6 +429,8 @@ import ListaCarpetasDrive from "./ListaCarpetasDrive.vue"
 import ListaCarpetasDriveEstrategia from "./ListaCarpetasDriveEstrategia.vue";
 import FileInfo from "./FileInfo.vue"
 import UloadFile from "./UloadFile.vue"
+import PdfViewer from "./PdfViewer.vue"
+import BuscarEnDrive from "./BuscarEnDrive.vue"
 import {
    Dialog,
   DialogPanel,
@@ -487,7 +498,8 @@ export default
       ListaCarpetasDriveEstrategia,
       FileInfo,
       UloadFile,
-
+      PdfViewer,
+      BuscarEnDrive
     },
 
     created() {
@@ -590,6 +602,8 @@ export default
         this.panelDerechoVisible = false
         this.listarcarpetas(this.area_seleccionada_id)
       },
+ 
+
       refreshTree() {
         
         this.listarcarpetas(this.area_seleccionada_id)
@@ -622,8 +636,8 @@ export default
 
         // ordenar actual nivel
         nodes.sort((a, b) =>
-          b.name.localeCompare(
-            a.name,
+          a.name.localeCompare(
+            b.name,
             'es',
             { sensitivity: 'base' }
           )
@@ -641,6 +655,28 @@ export default
 
 
       },
+      async updinfo() {
+      try {
+        const data = { area_id: area_id.value, estado: estado };
+        const resp = await api.post(
+          `/api/v1/presupuesto/ingresos/bloqueo/`,
+          data,
+          { headers: { "Content-Type": "application/json"  } }
+        );
+        const status = resp.data.status;
+        switch (status) {
+          case 200:
+            console.log("actualizado");
+            this.ingresos_bloqueados = estado;
+            break;
+          default:
+            console.error("");
+        }
+        return true;
+      } catch (err) {
+        console.log(err);
+      }
+    },
     },
 
     data() {
@@ -703,6 +739,7 @@ export default
       const isSmallScreen = ref(window.innerWidth <= 768);
       const isPortrait = ref(window.matchMedia("(orientation: portrait)").matches);
       const panelDerechoVisible = ref(false)
+      const pdfViewerVisible= ref(false)
       const nodeSelec = ref({})
       const seccionVisible = ref(false)
       const area_seleccionada_id = ref(0)
@@ -710,6 +747,8 @@ export default
         isSmallScreen.value = window.innerWidth <= 768;
       };
 
+
+     
       const updateOrientation = () => {
         isPortrait.value = window.matchMedia("(orientation: portrait)").matches;
       };
@@ -728,6 +767,9 @@ export default
       const selectSeccion = (valor) => {
         console.log('-->', valor)
         seccionVisible.value = valor
+        if (valor=='show_file'){
+          pdfViewerVisible.value=true
+        }
       }
       const selectAreaId=(valor)=>{
          console.log('*****', valor)
@@ -751,7 +793,7 @@ export default
         setAreaSelec: selectAreaId
       })
 
-      return { isSmallScreen, isPortrait, panelDerechoVisible, nodeSelec, seccionVisible,area_seleccionada_id };
+      return { isSmallScreen, isPortrait, panelDerechoVisible, nodeSelec, seccionVisible,area_seleccionada_id,pdfViewerVisible };
     },
     
   };

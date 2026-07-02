@@ -69,38 +69,17 @@
             class="sidebar-button"
           >
 
-            <svg
-              class="w-7 h-7"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="1.8"
-              viewBox="0 0 24 24"
-            >
+             <svg class="w-5 h-5 hover:scale-110 transition-transform duration-300" fill="none" stroke="currentColor"
+              stroke-width="1.8" viewBox="0 0 24 24">
+              <circle cx="11" cy="11" r="6" stroke-linecap="round" stroke-linejoin="round" />
 
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                d="M4 16v1a2 2 0 002 2h12a2 2 0 002-2v-1"
-              />
-
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                d="M12 4v12"
-              />
-
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                d="M8 8l4-4 4 4"
-              />
-
+              <path stroke-linecap="round" stroke-linejoin="round" d="M20 20l-4.2-4.2" />
             </svg>
 
           </button>
 
           <span class="sidebar-label">
-            UPLOAD 
+            BUSCAR 
           </span>
 
         </div>

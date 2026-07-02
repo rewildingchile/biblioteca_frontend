@@ -6,8 +6,8 @@
 
 .bg-tech {
   background:
-    radial-gradient(circle at top left, rgba(0,180,255,0.12), transparent 30%),
-    radial-gradient(circle at bottom right, rgba(255,0,180,0.12), transparent 35%),
+    radial-gradient(circle at top left, rgba(0,180,255,0.50), transparent 80%),
+    radial-gradient(circle at bottom right, rgba(255,0,180,0.50), transparent 80%),
     linear-gradient(135deg, #050816 0%, #090b1f 45%, #12091d 100%);
 }
 
@@ -19,7 +19,7 @@
   position: relative;
   overflow: hidden;
 
-  background: rgba(15, 23, 42, 0.72);
+  background: #0D1427;
 
   border: 1px solid rgba(255,255,255,0.08);
 
@@ -387,9 +387,55 @@
 
   box-shadow:
     0 0 60px rgba(0, 0, 0, .35);
-  width: 600px;
+  width: 620px;
 }
-
+.finance-panel-2 {
+    border-radius: 12px;
+  background:
+    radial-gradient(circle at 20% 30%,
+      rgba(200, 120, 255, 0.08),
+      transparent 45%),
+    radial-gradient(circle at 80% 70%,
+      rgba(150, 50, 220, 0.06),
+      transparent 35%),
+    linear-gradient(135deg,
+      #12061f 0%,
+      #1f0d35 30%,
+      #2a1445 55%,
+      #180a2a 80%,
+      #0d0518 100%);
+  border: 1px solid rgba(200, 150, 255, 0.08);
+  backdrop-filter: blur(20px);
+  box-shadow:
+    0 0 40px rgba(100, 40, 180, 0.15),
+    0 9px 12px rgba(0, 0, 0, 0.70);
+  width: 800px;
+}
+.finance-panel-magenta {
+  border-radius: 12px;
+  background:
+    radial-gradient(circle at 20% 30%,
+      rgba(255, 20, 180, 0.18),
+      transparent 40%),
+    radial-gradient(circle at 80% 70%,
+      rgba(200, 0, 140, 0.12),
+      transparent 35%),
+    radial-gradient(circle at 50% 50%,
+      rgba(255, 0, 160, 0.05),
+      transparent 50%),
+    linear-gradient(135deg,
+      #0d000a 0%,
+      #1a0015 25%,
+      #2d0025 50%,
+      #1f001a 75%,
+      #0d000a 100%);
+  border: 1px solid rgba(255, 0, 180, 0.12);
+  backdrop-filter: blur(20px);
+  box-shadow:
+      0 0 40px rgba(100, 40, 180, 0.15),
+    0 9px 12px rgba(0, 0, 0, 0.70);
+  width: 800px;
+}
 /* =========================
    GLOWS
 ========================= */
