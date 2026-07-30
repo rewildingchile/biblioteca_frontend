@@ -3,15 +3,73 @@
   <div class="node">
 
     <!-- FILA -->
-    <div  class="node-row text-sm text-left text-"  @click="toggle" >
-    
+    <div  class="node-row text-sm text-left " >
+     
+      <span  class="  tracking-widest   text-cyan-300/80  border border-cyan-500/20  bg-cyan-500/5  px-2 py-1 rounded-full  font-mono text-lg"  > 
+                
+                <div v-if="is_editor" >  
+                  <div   v-if="node.is_folder" >
+                    <div class="grid grid-cols-2 gap-2 text-center rounded-xl  p-2 font-medium cursor-pointer transition hover:text-black " >
+                    <div class="hover:bg-blue-100  "  @click="toggle" >
+                      <span>+</span>  
+                    </div>   
+                    <div class="hover:bg-blue-100  " >  
+                      <span title="contribuir a la carpeta" @click="handleClickCustom(node,'request')">
+                      👩🏻‍💻 
+                      </span>
+                    </div>
+                    </div>
+                  </div>
+                  <div v-else >
+                  <div class="grid grid-cols-3 gap-0 text-center rounded-xl  p-2 font-medium cursor-pointer transition hover:text-black ">  
+                    <span></span>
+                    <span></span>
+                    <span  title="contribuir al archivo" @click="handleClick(node,'info')" class="hover:bg-blue-100" >
+                      👩🏻‍💻
+                    </span> 
+                  </div>
+                  </div>
+                </div> 
+
+
+                
+                <div v-if="is_admin" class="grid   gap-2  " >  
+                    
+                  <div  v-if="node.is_folder" >
+                   
+                    <div class="grid grid-cols-3">
+                      <span  @click="toggle"  class=" text-center rounded-xl  p-3 font-medium hover:bg-blue-100 hover:text-black cursor-pointer transition " >
+                        +
+                      </span>  
+                    
+                    <span title="añadir archivo a la carpeta"  v-if="node.is_folder" class=" text-center rounded-xl  p-3 font-medium hover:bg-blue-100 hover:text-black cursor-pointer transition"
+                    @click="handleClickCustom(node,'upload_file')">
+                    📥
+                    </span>
+                      <span  v-if="node.parent_drive_file_id" @click="handleClick(node,'info')" class="  text-center rounded-xl  p-3 font-medium hover:bg-blue-100 hover:text-black cursor-pointer transition ">
+                    ✍🏻
+                    </span> 
+                  </div>
+                </div>
+                  <div v-else>
+                    <div class="grid grid-cols-3">
+                     <span></span>
+                     <span></span>
+                    <span @click="handleClick(node,'info')" class=" text-center rounded-xl  p-3 font-medium hover:bg-blue-100 hover:text-black cursor-pointer transition">
+                    ✍🏻
+                    </span> </div>
+                  </div>
+                
+                </div>
+                
+                
+      </span>
+
+
+ 
       <!-- ICON -->
-      <div
-        class="folder-icon "  :class="{
-          'folder-open': open && node.is_folder,
-          'file-icon': !node.is_folder
-        }"
-      >
+      <div  @click="toggle"   class="folder-icon "  
+      :class="{ 'folder-open': open && node.is_folder,  'file-icon': !node.is_folder}" >
 
         <!-- FOLDER -->
 
@@ -41,8 +99,6 @@
 <div v-else >
  
  
- 
-
 <!-- PDF -->
 <svg
   v-if="node.mime_type.includes('pdf')"
@@ -196,29 +252,23 @@
 </svg>
 </div>
 </div>
+ 
+<span @click="handleClickCustom(node,'list_request')"  v-if="node.user_request"  title="user request pendientes"   class=" inline-block relative bell-wrapper " >
+    🔔
+    <!-- Indicador de notificación -->
+ <span class="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full animate-pulse"></span>
+  </span>
 
-    {{ node.name }}  
-<div v-if="is_admin" class="grid grid-cols-2 gap-1 ">  
-  <span v-if="!node.is_folder"  @click="handleClick(node,'info')">✏️</span> 
-  
-  <div v-if="node.parent_drive_file_id" @click="handleClick(node,'info')" class="px-2 text-center rounded-xl  text-red-100 font-medium hover:bg-blue-100 cursor-pointer transition">
-   🗑️
-  </div> 
-  <div  v-if="node.is_folder" class="p-1 text-center rounded-xl  text-violet-200 font-medium hover:bg-blue-100 hover:text-black cursor-pointer transition"
-   @click="handleClickCustom(node,'upload_file')">
-   ⬆️  
-  </div>
-</div>
-      
-</div>
-<div v-if="open && node.is_folder"  class="children  contextual">
-  <div class="grid grid-cols-2 gap-2  ">
-  
+ <span v-if="!node.is_folder" class="cursor-pointer p-2"  @click="handleClick(node,'view')">  {{ node.name }}  </span>
+ <span v-else  @click="toggle" >{{ node.name }}</span>
  
 
+ 
+
+
+      
 </div>
-  
-</div>
+ 
     <!-- CHILDREN -->
     <div  v-if="open && node.children?.length"   class="children" >
 
@@ -227,6 +277,7 @@
         :key="child.id"
         :node="child"
         :area_id="area_id"
+        :rol="rol"
       />
 
     </div>
@@ -234,20 +285,29 @@
   </div>
 </template>
 
+<style scoped>
+.bell-wrapper {
+  display: inline-block;
+  animation: bell-ring 2s ease-in-out infinite;
+  transform-origin: top center;
+  font-size: 1.2rem;
+}
 
+@keyframes bell-ring {
+  0%, 80%, 100% { transform: rotate(0deg); }
+  85% { transform: rotate(10deg); }
+  90% { transform: rotate(-10deg); }
+  95% { transform: rotate(5deg); }
+  98% { transform: rotate(-5deg); }
+}
+</style>
 <!-- DriveNode.vue -->
  
 <script setup>
 import { ref , inject, provide } from 'vue'
 import DriveNode from './DriveNode.vue'
 
-const is_admin = ref(true)
-
-const nodoSelec = ref({});
-
-const selecNodo = (valor) => {
-    nodoSelec.value = valor;
- };
+ 
 
 const props = defineProps({
   node: {
@@ -256,8 +316,26 @@ const props = defineProps({
   },
   area_id:{
     type:Number,
+  },
+   rol:{
+    type: Object
   }
 })
+let is_admin
+let is_editor
+const rolUsr = props.rol 
+if (rolUsr){ 
+  is_admin = rolUsr?.id === 1
+ 
+  is_editor = rolUsr?.id === 3
+}
+ 
+ 
+const nodoSelec = ref({});
+ 
+const selecNodo = (valor) => {
+    nodoSelec.value = valor;
+ };
 
 const open = ref(false)
 
@@ -288,6 +366,9 @@ const handleClickCustom = (node,action) => {
   panel.seccionVisible(action)
   panel.setAreaSelec(props.area_id)  
 }
+
+ 
+
 // Proveemos tanto el estado como la función
 provide('nodo', {
   nodoSelec: nodoSelec,

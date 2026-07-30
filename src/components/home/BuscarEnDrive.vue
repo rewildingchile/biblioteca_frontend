@@ -98,6 +98,9 @@
       <span class="text-sm font-medium text-sky-700">
         {{ results.length }}
         resultado{{ results.length !== 1 ? 's' : '' }} encontrado{{ results.length !== 1 ? 's' : '' }}
+ 
+        {{ search_terms }}
+       
       </span>
     </div>
 
@@ -175,7 +178,8 @@ export default {
     data(){
     return{
             search:'',
-            results:[]
+            results:[],
+            search_terms:[]
     }
 },
     methods: {
@@ -195,6 +199,7 @@ export default {
                 );
                 const status = resp.data.status;
                 if (status==='success'){
+                    this.search_terms = resp.data.search_terms
                     this.results=resp?.data?.results || []
                 }
                 return true;

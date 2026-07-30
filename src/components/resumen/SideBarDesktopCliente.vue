@@ -73,6 +73,23 @@
 
         </div>
 
+   <!-- ITEM -->
+        <div class="sidebar-item-group">
+
+          <button @click="ExitCodAccion(5)" class="sidebar-button">
+            <svg class="w-5 h-5 hover:scale-110 transition-transform duration-300" fill="none" stroke="currentColor"
+              stroke-width="1.8" viewBox="0 0 24 24">
+              <circle cx="11" cy="11" r="6" stroke-linecap="round" stroke-linejoin="round" />
+
+              <path stroke-linecap="round" stroke-linejoin="round" d="M20 20l-4.2-4.2" />
+            </svg>
+          </button>
+          <span class="sidebar-label">
+           CONTRIB.
+          </span>
+
+        </div>
+
         <!-- ITEM -->
         <div class="sidebar-item-group">
 

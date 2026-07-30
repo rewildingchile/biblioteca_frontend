@@ -175,9 +175,44 @@ const state = {
         console.log("status:",status)
         switch (status) 
         {
-           
+         
             case 200:
             {
+              let showConservacion=false;
+              let showFinanzas=false;
+              let rolFinanzas = {}
+              let rolConservacion = {}
+              const areas=resp.data.payload.info.areas;
+              if (areas && Array.isArray(areas)) { 
+                  /**
+              "areas": [
+                {
+                    "area__id": 2,
+                    "area__nombre": "Conservación & Estrategia",
+                    "rol_id": 1,
+                    "rol__nombre": "manager"
+                },
+                {
+                    "area__id": 1,
+                    "area__nombre": "Finanzas",
+                    "rol_id": 1,
+                    "rol__nombre": "manager"
+                }
+            */
+           console.log("areas--->",areas)
+                       const f = areas.find(area=> area.area__id===1)
+                       if (f){
+                            showFinanzas=true
+                            rolFinanzas={ 'id':f.rol_id ,'nombre':f.rol__nombre}
+                       }
+                       const c=areas.find(area=> area.area__id===2)
+                       if (c){
+                            showConservacion=true
+                            rolConservacion={ 'id':c.rol_id ,'nombre':c.rol__nombre}
+                       }
+                       
+              }
+
               tokens=resp.data.payload.tokens;
               commit('setTokens',tokens);
               commit('setPlanCuentas',resp.data.payload.info.cuentas);
@@ -192,6 +227,11 @@ const state = {
                 apellido1: resp.data.payload.info.apellido1,
                 is_admin: resp.data.payload.info.is_admin,
                 modifica_presupuestos: resp.data.payload.info.modifica_presupuestos,
+                grupos: resp.data.payload.info.grupos,
+                showFinanzas: showFinanzas,
+                rolFinanzas: rolFinanzas ,
+                showConservacion: showConservacion,
+                rolConservacion: rolConservacion,
               });
               break;
             }

@@ -263,9 +263,8 @@
 
 <script setup>
 import { ref, computed, inject } from 'vue'
-import ShowMimeIcon from './ShowMimeIcon.vue'
-import api from "@/api/axios";
-
+import ShowMimeIcon from './ShowMimeIcon.vue' 
+import {treeSubFolder} from "@/services/tree.services.js"
 import DriveTree from './DriveTree.vue'
 
 
@@ -350,16 +349,20 @@ const ordenarChildrenAscendente = (nodes) => {
   })
 }
 
-const listar = async (node) => {
-  try {
-    const r = await api.get(`drive/tree/node/${node.drive_file_id}/`)
-    nodes.value = r.data
+
+ 
+
+const listar = async (node) =>{
+  try
+  {
+    nodes.value=  await treeSubFolder(node)
     ordenarChildrenAscendente(nodes.value)
-  } catch (error) {
+  } catch(error){
     console.error("error obteniendo arbol", error)
     throw error
   }
 }
+
 
 
  

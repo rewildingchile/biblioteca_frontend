@@ -1,15 +1,12 @@
 <template>
-    <!-- <div class="flex justify-between">
-      <span class="text-xs text-indigo-500 font-mono bg-indigo-50 px-3 py-1 rounded-full shadow-sm">&#60;Home/DriveTree.vue&#62;</span>
-    </div>
-     <div class="flex justify-between">
-      <span class="text-xs text-indigo-500 font-mono bg-indigo-50 px-3 py-1 rounded-full shadow-sm">&#60;Home/DriveNode.vue&#62;</span>
-    </div>  -->
-
-    <DriveNode  v-for="node in nodes"  
+   <!--- <span  class="  tracking-widest   text-cyan-300/80
+                 border border-cyan-500/20  bg-cyan-500/5  px-3 py-1 rounded-full
+                 font-mono text-sm"  >{{ rol }} </span>  -->
+   <DriveNode  v-for="node in nodes"  
                 :key="node.id"
                 :node="node"
-                :area_id="area_id" />
+                :area_id="area_id" 
+                :rol="rol"/>
  </template>
 
 <script setup>
@@ -22,6 +19,9 @@ defineProps({
   },
   area_id:{
     type: Number
+  },
+  rol:{
+    type: Object
   }
 })
 </script>

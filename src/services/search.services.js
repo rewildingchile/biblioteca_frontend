@@ -29,3 +29,4 @@ export const searchDocumentsWithFilters = async (query, filters = {}) => {
     throw error
   }
 }            
+

@@ -2,11 +2,11 @@
  
  
   <div class="ml-6   finance-panel-magenta relative overflow-hidden">
-
+<!--
   <div class="flex justify-between">
       <span class="text-xs text-indigo-500 font-mono bg-indigo-50 px-3 py-1 rounded-full shadow-sm">&#60;Home/ListaCarpetasDrive.vue&#62;</span>
     </div>  
-
+-->
     <!-- GLOWS -->
  
 
@@ -118,7 +118,15 @@
         <div class="flex items-center gap-3 mb-2">
 
 
-
+        <span
+          class=" tracking-widest 
+                 text-cyan-300/80
+                 border border-cyan-500/20
+                 bg-cyan-500/5
+                 px-3 py-1 rounded-full
+                 font-mono text-xs"  >
+          &#60;DriveTree&#62;
+        </span>
         </div>
 
         <!-- TREE -->
@@ -128,7 +136,7 @@
                  
                  p-4">
  
-          <DriveTree :nodes="data" :area_id="area_id"  />
+          <DriveTree :rol="rol" :nodes="data" :area_id="area_id"  />
 
         </div>
 
@@ -148,11 +156,14 @@
 import { ref, onMounted, watch } from 'vue'
 import api from "@/api/axios";
 import DriveTree from './DriveTree.vue'
-
+ 
 // Props
 const props = defineProps({
  
   prop_json_carpetas: {
+    type: Object
+  },
+  rol:{
     type: Object
   }
 })
@@ -187,9 +198,11 @@ const ordenarChildrenAscendente = (nodes) => {
   })
 }
 
+ 
+
 const listar = async (area_id) => {
   try {
-    const r = await api.get(`drive/tree/${area_id}/`)
+      const r = await api.get(`drive/tree/${area_id}/`)
     data.value = r.data
     ordenarChildrenAscendente(data.value)
   } catch (error) {

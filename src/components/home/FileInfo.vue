@@ -1,5 +1,7 @@
 <template>
-
+  <div class="flex justify-between">
+      <span class="text-xs text-indigo-500 font-mono text-sm bg-indigo-50 px-3 py-1 rounded-full shadow-sm">&#60;FileInfo&#62;</span>
+    </div>  
   <!-- HEADER -->
   <div
     class="flex items-center justify-between px-6 py-5
@@ -8,16 +10,12 @@
   >
 
     <div>
-      <div class="text-xs font-semibold tracking-wider text-sky-100 uppercase">
+      <div class="text-xs  tracking-wider text-sky-100 uppercase">
         <span v-if="nodeSelec.is_folder">Carpeta</span>
         <span v-else>Archivo</span>
       </div>
 
-      <h1 class="text-2xl font-bold text-white mt-1 break-all">
-        <span v-if="nodeSelec.is_folder">📁</span>
-        <span v-else>📄</span>
-        {{ nodeSelec.name }}
-      </h1>
+      
     </div>
 
     <button
@@ -37,92 +35,109 @@
     bg-gradient-to-br from-blue-50 via-white to-sky-50"
   >
 
-    <!-- ACCIONES -->
-    <div
-      class="flex flex-wrap items-center gap-3
-      p-4 bg-white rounded-2xl
-      border border-blue-100 shadow-sm"
-    >
+<!-- ACCIONES -->
+<div class="flex flex-wrap items-center gap-4 p-5 bg-white rounded-2xl
+            border border-gray-200 shadow-sm hover:shadow-md transition-shadow duration-200">
+  
+  <!-- Título del archivo/carpeta -->
+  <div class="grid grid-cols-1 gap-1 w-full">
+   <div class="flex items-center gap-3 w-full">
+  <!-- Icono -->
+  <div class="flex-shrink-0 w-10 h-10 rounded-lg bg-gradient-to-br from-blue-50 to-indigo-50 
+              flex items-center justify-center text-2xl shadow-sm border border-blue-100/50">
+    <span role="img" aria-label="{{ nodeSelec.is_folder ? 'Carpeta' : 'Archivo' }}">
+      {{ nodeSelec.is_folder ? '📁' : '📄' }}
+    </span>
+  </div>
 
-      <!-- VER -->
-      <div v-if="!nodeSelec.is_folder">
-        <a
-          @click="documentView()"
-          target="_blank"
-          class="cursor-pointer inline-flex items-center gap-2
-          px-5 py-3
-          bg-sky-600 hover:bg-sky-700
-          text-white font-semibold text-sm
-          rounded-xl shadow-md hover:shadow-lg
-          transition-all duration-200"
-        >
-          <svg
-            class="w-5 h-5"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            viewBox="0 0 24 24"
-          >
-            <circle cx="11" cy="11" r="6" />
-            <path d="M20 20l-4.2-4.2" stroke-linecap="round" />
-          </svg>
+  <!-- Nombre -->
+  <div class="flex-1 min-w-0">
+    <h1 class="text-xl sm:text-2xl font-semibold text-gray-800 truncate">
+      <span class="font-mono">{{ nodeSelec.name }}</span>
+    </h1>
+    <!-- Subtítulo opcional -->
+    <p class="text-xs sm:text-sm text-gray-500 font-medium mt-0.5">
+      {{ nodeSelec.is_folder ? 'Carpeta' : 'Documento' }}
+      <span class="text-gray-300 mx-1.5">·</span>
+      <span class="font-mono text-gray-400">{{ nodeSelec.id?.slice(0, 8) || 'N/A' }}</span>
+    </p>
+  </div>
 
-          Ver
-        </a>
-      </div>
+  <!-- Badge opcional -->
+  <div class="flex-shrink-0 hidden sm:flex">
+    <span class="px-3 py-1 text-xs font-semibold rounded-full 
+                 {{ nodeSelec.is_folder ? 'bg-blue-50 text-blue-700 border border-blue-200' : 'bg-emerald-50 text-emerald-700 border border-emerald-200' }}">
+      {{ nodeSelec.is_folder ? '📂 Carpeta' : '📄 Archivo' }}
+    </span>
+  </div>
+</div>
+  </div>
 
-      <!-- GDRIVE -->
-      <div v-if="!nodeSelec.is_folder">
-        <a
-          :href="nodeSelec.web_view_link"
-          target="_blank"
-          class="inline-flex items-center gap-2
-          px-5 py-3
-          bg-blue-600 hover:bg-blue-700
-          text-white font-semibold text-sm
-          rounded-xl shadow-md hover:shadow-lg
-          transition-all duration-200"
-        >
-          <svg
-            class="w-5 h-5"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            viewBox="0 0 24 24"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              d="M8 3h8l5 9-4 7H7l-4-7z"
-            />
-
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              d="M8 3l4 7m4-7l-4 7M4 12h17"
-            />
-          </svg>
-
-          Google Drive
-        </a>
-      </div>
-
-      <!-- BORRAR -->
-      <div>
-        <a
-          @click="confirmDelete()"
-          class="cursor-pointer inline-flex items-center gap-2
-          px-5 py-3
-          bg-red-500 hover:bg-red-600
-          text-white font-semibold
-          rounded-xl shadow-md hover:shadow-lg
-          transition-all duration-200"
-        >
-          🗑 Borrar
-        </a>
-      </div>
-
+  <!-- Botones de acción -->
+  <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 w-full mt-2">
+    
+    <!-- VER -->
+    <div v-if="!nodeSelec.is_folder">
+      <button
+        @click="documentView()"
+        class="w-full inline-flex items-center justify-center gap-2.5
+               px-5 py-3
+               bg-sky-500 hover:bg-sky-600 active:bg-sky-700
+               text-white text-sm font-medium
+               rounded-xl shadow-sm hover:shadow-md
+               transition-all duration-200
+               focus:outline-none focus:ring-2 focus:ring-sky-400 focus:ring-offset-2"
+      >
+        <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <circle cx="11" cy="11" r="6" />
+          <path d="M20 20l-4.2-4.2" stroke-linecap="round" />
+        </svg>
+        <span>Ver archivo</span>
+      </button>
     </div>
+
+    <!-- GDRIVE -->
+    <div v-if="!nodeSelec.is_folder">
+      <a
+        :href="nodeSelec.web_view_link"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="w-full inline-flex items-center justify-center gap-2.5
+               px-5 py-3
+               bg-blue-600 hover:bg-blue-700 active:bg-blue-800
+               text-white text-sm font-medium
+               rounded-xl shadow-sm hover:shadow-md
+               transition-all duration-200
+               focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2"
+      >
+        <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M8 3h8l5 9-4 7H7l-4-7z" />
+          <path stroke-linecap="round" stroke-linejoin="round" d="M8 3l4 7m4-7l-4 7M4 12h17" />
+        </svg>
+        <span>Abrir en Drive</span>
+      </a>
+    </div>
+
+    <!-- ELIMINAR -->
+    <div>
+      <button
+        @click="confirmDelete()"
+        class="w-full inline-flex items-center justify-center gap-2.5
+               px-5 py-3
+               bg-red-500 hover:bg-red-600 active:bg-red-700
+               text-white text-sm font-medium
+               rounded-xl shadow-sm hover:shadow-md
+               transition-all duration-200
+               focus:outline-none focus:ring-2 focus:ring-red-400 focus:ring-offset-2"
+      >
+        <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+        </svg>
+        <span>Eliminar</span>
+      </button>
+    </div>
+  </div>
+</div>
 
     <!-- INFORMACIÓN -->
     <div
@@ -148,7 +163,7 @@
             />
           </svg>
 
-          <span class="text-sm font-semibold text-sky-700">
+          <span class="text-sm  text-sky-700">
             Agregar información adicional 
           </span>
         </div>
@@ -163,7 +178,7 @@
             @input="descripcion = $event.target.value"
             @blur="handleBlurDescripcion"
             class="w-full bg-transparent outline-none resize-none
-            text-sm text-slate-700"
+            text-sm text-slate-700  border-sky-600"
           ></textarea>
         </div>
 
@@ -186,7 +201,7 @@
             />
           </svg>
 
-          <span class="text-sm font-semibold text-sky-700">
+          <span class="text-sm  text-sky-700">
             Texto extraido automaticamente
           </span>
         </div>
@@ -197,7 +212,7 @@
             bg-sky-50 border border-sky-100
             rounded-2xl p-5
             text-xs text-slate-700
-            text-left leading-relaxed font-mono"
+            text-left leading-relaxed font-mono text-sm"
             v-html="textoFormateado"
           >
           </div>
@@ -229,7 +244,7 @@
 
       </div>
 
-     
+   
 
   </div>
 
@@ -242,10 +257,10 @@
       @click="cerrar()"
       class="w-full py-3 rounded-xl
       bg-sky-600 hover:bg-sky-700
-      text-white font-semibold
+      text-white  font-mono text-sm
       transition-all shadow-md hover:shadow-lg"
     >
-      Cerrar
+      Cerrar ventana
     </button>
   </div>
 
@@ -254,20 +269,8 @@
   <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6">
     <!-- Icono -->
     <div class="flex justify-center mb-4">
-      <div class="flex items-center justify-center w-16 h-16 rounded-full bg-red-100">
-        <svg
-          class="w-8 h-8 text-red-600"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-          viewBox="0 0 24 24"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            d="M19 7L5 7M10 11v6M14 11v6M6 7l1 12a2 2 0 002 2h6a2 2 0 002-2l1-12M9 7V4a1 1 0 011-1h4a1 1 0 011 1v3"
-          />
-        </svg>
+      <div class="flex items-center justify-center w-16 h-16 rounded-full bg-red-900 text-lg">
+         ☠️
       </div>
     </div>
 
@@ -333,7 +336,7 @@
             </svg>
           </div>
           <div>
-            <h2 class="text-xl font-semibold text-white">Vista previa del archivo</h2>
+            <h2 class="text-xl  text-white">Vista previa del archivo</h2>
             <p class="text-sm text-white/70">{{ fileName || 'Documento' }}</p>
           </div>
         </div>
