@@ -5,7 +5,7 @@
       <span class="text-xs text-indigo-500 font-mono bg-indigo-50 px-3 py-1 rounded-full shadow-sm">&#60;Home/SendRequest.vue&#62;</span>
     </div>
     <h2 class="text-lg font-semibold text-black">
-    Enviar request
+    Proponer actualización en la biblioteca
     </h2>
 
     <button @click="cerrar()" class="w-8 h-8 flex items-center justify-center text-black
