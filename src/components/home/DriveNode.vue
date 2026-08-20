@@ -30,9 +30,7 @@
                   </div>
                   </div>
                 </div> 
-
-
-                
+ 
                 <div v-if="is_admin" class="grid   gap-2  " >  
                     
                   <div  v-if="node.is_folder" >
@@ -65,191 +63,24 @@
                 
       </span>
 
+<!-- ICON -->
+<div  @click="toggle"   class="folder-icon "  :class="{ 'folder-open': open && node.is_folder,  'file-icon': !node.is_folder}" >
 
- 
-      <!-- ICON -->
-      <div  @click="toggle"   class="folder-icon "  
-      :class="{ 'folder-open': open && node.is_folder,  'file-icon': !node.is_folder}" >
-
-        <!-- FOLDER -->
-
-        <svg
-          v-if="node.is_folder"
-         
-          fill="none"
-          stroke="currentColor"
-          stroke-width="1.8"
-          viewBox="0 0 24 24"
-        >
-
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            d="M3 7a2 2 0 012-2h4l2 2h8a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2V7z"
-          />
-
-        </svg>
-        
-       
-
- 
- <!--- DEPENDIENDO DE node.mime_type--> 
- <!--  MOSTRAR SVG (pdf, imagen, word, )-->
+  <!-- FOLDER -->
+  <svg v-if="node?.is_folder" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 7a2 2 0 012-2h4l2 2h8a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2V7z"/></svg>
 
 <div v-else >
- 
- 
 <!-- PDF -->
-<svg
-  v-if="node.mime_type.includes('pdf')"
-  @click="handleClick(node,'view')"
-  class="w-8 h-8 text-red-600 cursor-pointer hover:scale-110 transition"
-  fill="none"
-  viewBox="0 0 24 24"
->
-  <path
-    d="M7 3h7l5 5v13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z"
-    stroke="currentColor"
-    stroke-width="1.5"
-    fill="white"
-  />
-  <path
-    d="M14 3v5h5"
-    stroke="currentColor"
-    stroke-width="1.5"
-  />
-  <text
-    x="12"
-    y="17"
-    text-anchor="middle"
-    font-size="5"
-    font-weight="bold"
-    fill="currentColor"
-  >
-    PDF
-  </text>
-</svg>
-
+ <svg v-if="node?.mime_type?.includes('pdf')" @click="handleClick(node,'view')" class="w-8 h-8 text-red-600 cursor-pointer hover:scale-110 transition" fill="none" viewBox="0 0 24 24"><path d="M7 3h7l5 5v13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z" stroke="currentColor" stroke-width="1.5" fill="white"/><path d="M14 3v5h5" stroke="currentColor" stroke-width="1.5"/><text x="12" y="17" text-anchor="middle" font-size="5" font-weight="bold" fill="currentColor">PDF</text></svg>
 <!-- Imagen -->
-<svg
-  v-else-if="node.mime_type.startsWith('image/')"
-  @click="handleClick(node,'view')"
-  class="w-8 h-8 text-sky-600 cursor-pointer hover:scale-110 transition"
-  fill="none"
-  viewBox="0 0 24 24"
->
-  <rect
-    x="3"
-    y="5"
-    width="18"
-    height="14"
-    rx="2"
-    stroke="currentColor"
-    stroke-width="1.5"
-  />
-  <circle
-    cx="9"
-    cy="10"
-    r="2"
-    stroke="currentColor"
-    stroke-width="1.5"
-  />
-  <path
-    d="M5 17l5-5 3 3 3-2 3 4"
-    stroke="currentColor"
-    stroke-width="1.5"
-    fill="none"
-  />
-</svg>
+ <svg v-else-if="node?.mime_type?.startsWith('image/')" @click="handleClick(node,'view')" class="w-8 h-8 text-sky-600 cursor-pointer hover:scale-110 transition" fill="none" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2" stroke="currentColor" stroke-width="1.5"/><circle cx="9" cy="10" r="2" stroke="currentColor" stroke-width="1.5"/><path d="M5 17l5-5 3 3 3-2 3 4" stroke="currentColor" stroke-width="1.5" fill="none"/></svg>
 
 <!-- Word -->
-<svg
-  v-else-if="
-    node.mime_type.includes('word') ||
-    node.mime_type.includes('officedocument.wordprocessingml')
-  "
-  @click="handleClick(node,'view')"
-  class="w-8 h-8 text-blue-700 cursor-pointer hover:scale-110 transition"
-  fill="none"
-  viewBox="0 0 24 24"
->
-  <path
-    d="M7 3h7l5 5v13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z"
-    stroke="currentColor"
-    stroke-width="1.5"
-    fill="white"
-  />
-  <path
-    d="M14 3v5h5"
-    stroke="currentColor"
-    stroke-width="1.5"
-  />
-  <text
-    x="12"
-    y="17"
-    text-anchor="middle"
-    font-size="5"
-    font-weight="bold"
-    fill="currentColor"
-  >
-    DOC
-  </text>
-</svg>
-
+<svg v-else-if="node?.mime_type?.includes('word') || node.mime_type?.includes('officedocument.wordprocessingml')" @click="handleClick(node,'view')" class="w-8 h-8 text-blue-700 cursor-pointer hover:scale-110 transition" fill="none" viewBox="0 0 24 24"><path d="M7 3h7l5 5v13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z" stroke="currentColor" stroke-width="1.5" fill="white"/><path d="M14 3v5h5" stroke="currentColor" stroke-width="1.5"/><text x="12" y="17" text-anchor="middle" font-size="5" font-weight="bold" fill="currentColor">DOC</text></svg>
 <!-- Excel -->
-<svg
-  v-else-if="
-    node.mime_type.includes('sheet') ||
-    node.mime_type.includes('spreadsheet')
-  "
-  @click="handleClick(node,'view')"
-  class="w-8 h-8 text-green-600 cursor-pointer hover:scale-110 transition"
-  fill="none"
-  viewBox="0 0 24 24"
->
-  <path
-    d="M7 3h7l5 5v13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z"
-    stroke="currentColor"
-    stroke-width="1.5"
-    fill="white"
-  />
-  <path
-    d="M14 3v5h5"
-    stroke="currentColor"
-    stroke-width="1.5"
-  />
-  <text
-    x="12"
-    y="17"
-    text-anchor="middle"
-    font-size="5"
-    font-weight="bold"
-    fill="currentColor"
-  >
-    XLS
-  </text>
-</svg>
-
+<svg v-else-if="node?.mime_type?.includes('sheet') || node.mime_type?.includes('spreadsheet')" @click="handleClick(node,'view')" class="w-8 h-8 text-green-600 cursor-pointer hover:scale-110 transition" fill="none" viewBox="0 0 24 24"><path d="M7 3h7l5 5v13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z" stroke="currentColor" stroke-width="1.5" fill="white"/><path d="M14 3v5h5" stroke="currentColor" stroke-width="1.5"/><text x="12" y="17" text-anchor="middle" font-size="5" font-weight="bold" fill="currentColor">XLS</text></svg>
 <!-- Archivo genérico -->
-<svg
-  v-else
-  @click="handleClick(node,'view')"
-  class="w-8 h-8 text-slate-500 cursor-pointer hover:scale-110 transition"
-  fill="none"
-  viewBox="0 0 24 24"
->
-  <path
-    d="M7 3h7l5 5v13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z"
-    stroke="currentColor"
-    stroke-width="1.5"
-    fill="white"
-  />
-  <path
-    d="M14 3v5h5"
-    stroke="currentColor"
-    stroke-width="1.5"
-  />
-</svg>
+<svg v-else @click="handleClick(node,'view')" class="w-8 h-8 text-slate-500 cursor-pointer hover:scale-110 transition" fill="none" viewBox="0 0 24 24"><path d="M7 3h7l5 5v13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z" stroke="currentColor" stroke-width="1.5" fill="white"/><path d="M14 3v5h5" stroke="currentColor" stroke-width="1.5"/></svg>
 </div>
 </div>
  
@@ -326,7 +157,6 @@ let is_editor
 const rolUsr = props.rol 
 if (rolUsr){ 
   is_admin = rolUsr?.id === 1
- 
   is_editor = rolUsr?.id === 3
 }
  
@@ -359,6 +189,7 @@ const handleClick = (node,action) => {
   panel.setNode(node)
   panel.setAreaSelec(props.area_id)
 }
+
 const handleClickCustom = (node,action) => {
   
   panel.setVisible(true)

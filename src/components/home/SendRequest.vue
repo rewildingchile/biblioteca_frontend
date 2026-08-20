@@ -46,6 +46,13 @@
             >
               <span>Subir carpeta</span>  
             </button> 
+ 
+              <button 
+              @click="showConfirmSendRequestRename=true"
+              class="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg transition-all duration-200 shadow-sm hover:shadow-md flex items-center gap-2"
+            >
+              <span>Renombrar carpeta</span>  
+            </button> 
           </div>
 
         
@@ -190,6 +197,78 @@
       </div>
     </div>
   </div>
+  
+ <div v-if="showConfirmSendRequestRename" class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm font-mono">
+  <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6">
+    <!-- Icono -->
+    <div class="flex justify-center mb-4">
+      <div class="flex items-center justify-center w-16 h-16 p-2  rounded-full bg-blue-900 text-lg " style="font-size: 40px;">
+         ✏️
+      </div>
+    </div>
+
+    <div class="p-6 ">
+
+      <div class="flex items-center gap-2 mb-1">
+        <svg class="w-5 h-5 text-sky-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5h2m-1-1v2m-7 5h14M5 13h14M5 17h10"/></svg>
+        <span class="text-sm text-sky-700">  {{ props.nodeSelec.name }}</span>
+      </div>
+
+        <div  class="max-h-[200px] overflow-y-auto   bg-sky-50 border border-sky-100 rounded-2xl py-5 px-6" >
+          
+        
+          <textarea
+            :value="new_name"
+            @input="new_name = $event.target.value"
+            :placeholder="props.nodeSelec.name"
+            class="w-full bg-transparent outline-none resize-none
+            text-sm text-slate-700  border-sky-600"
+          ></textarea>
+        </div>
+
+      </div>
+
+    <!-- Título -->
+    <h2 class="text-xl font-bold text-center text-gray-800">
+      Confirmo que estoy solicitando renombrar
+      <span v-if="nodeSelec.is_folder">esta carpeta </span>
+      <span v-else>este archivo </span>
+     en la biblioteca
+    </h2>
+
+    <!-- Mensaje -->
+    <p class="mt-3 text-center text-gray-600">
+      ¿Confirma enviar solicitud?
+    </p>
+ 
+
+    <!-- Botones -->
+    <div class="mt-6 flex justify-center gap-3">
+
+    
+
+      <button 
+        @click="enviarRequest('rename')"
+        class="px-5 py-2 rounded-xl
+               bg-blue-600 text-white
+               hover:bg-blue-700
+               shadow-md transition"
+      >
+        Sí, enviar solicitud 
+      </button>
+        <button
+        @click="showConfirmSendRequestRename = false"
+        class="px-5 py-2 rounded-xl
+               bg-gray-100 text-gray-700
+               hover:bg-gray-200 transition"
+      >
+        Cancelar
+      </button>
+     
+    </div>
+
+  </div>
+  </div>
 </template>
 
 <style scoped>
@@ -241,12 +320,17 @@ const props = defineProps({
     required:true
   }
 })
+const API_ENDPOINT_POST_REQUEST= '/api/v1/user_request/post/'
+
 const emit = defineEmits(['cerrarPanelDerecho','refreshTree'])
 // ---------- Configuración ----------
 const MAX_CONCURRENT_UPLOADS = 3      // subidas simultáneas
 const MAX_FILE_SIZE_MB = 100          // 100 MB (ajustado a tu backend)
 const API_ENDPOINT = '/api/v1/upload/'
 const API_PREPARE_ENDPOINT = '/api/v1/prepare-upload/'  // Nuevo endpoint
+
+
+const new_name = ref('')
 
 // ---------- Estado ----------
 const fileInput = ref(null)
@@ -258,6 +342,7 @@ const isPaused = ref(false) // Control de pausa manual
 const isPreparing = ref(false)  // Indicador de preparación
 
 const folder_destino_selec_by_user = ref('') 
+let showConfirmSendRequestRename = ref(false)
 
 // Estado no-reactivo (variables normales)
 let activeUploads = 0  // Contador de subidas activas
@@ -772,6 +857,25 @@ async function loadQueueFromDB() {
     abortController: null
   }))
 }
+
+
+async function enviarRequest(accion_label){
+    console.log(`⚠️ enviando request accion ${accion_label} ${props.nodeSelec?.drive_file_id}`)
+ 
+    const response = await api.post(API_ENDPOINT_POST_REQUEST, {
+      drive_file_id: props.nodeSelec?.drive_file_id,
+      accion_label : accion_label,
+      area_id : props.area_id,
+      new_name: new_name.value,
+    })
+    console.log(response.data)
+    if (response.data.success){
+      showConfirmSendRequestRename.value = false
+    
+       emit('cerrarPanelDerecho')
+    }
+}
+
 
 // ---------- Ciclo de vida ----------
 onMounted(async () => {

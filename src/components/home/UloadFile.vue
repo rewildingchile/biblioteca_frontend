@@ -4,8 +4,10 @@
   <div class="flex justify-between">
       <span class="text-xs text-indigo-500 font-mono bg-indigo-50 px-3 py-1 rounded-full shadow-sm">&#60;Home/Uload.vue&#62;</span>
     </div>
-    <h2 class="text-lg font-semibold text-black">
-      Información del archivo
+    <h2 class="text-lg font-mono text-black">
+   <span role="img" aria-label="{{ nodeSelec.is_folder ? 'Carpeta' : 'Archivo' }}">
+          {{ nodeSelec.is_folder ? '📁' : '📄' }}
+        </span>  {{ nodeSelec.name }}
     </h2>
 
     <button @click="cerrar()" class="w-8 h-8 flex items-center justify-center text-black

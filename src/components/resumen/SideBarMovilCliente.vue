@@ -122,49 +122,7 @@
 
         </div>
 
-        <!-- ITEM -->
-        <div class="sidebar-item-group">
-
-          <button
-            @click="ExitCodAccion(8)"
-            class="sidebar-button"
-          >
-
-            <svg
-              class="w-7 h-7"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="1.8"
-              viewBox="0 0 24 24"
-            >
-
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                d="M3 13h4v8H3v-8z"
-              />
-
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                d="M10 7h4v14h-4V7z"
-              />
-
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                d="M17 11h4v10h-4V11z"
-              />
-
-            </svg>
-
-          </button>
-
-          <span class="sidebar-label">
-            REPORT
-          </span>
-
-        </div>
+      
 
       </nav>
 

@@ -40,8 +40,8 @@
         <!-- TITLE -->
         <div>
 
-          <h1 class="text-3xl  font-semiboldn tracking-widen  text-white font-mono">
-            Finanzas
+          <h1 class="text-1xl  font-semiboldn tracking-widen  text-white font-mono">
+            Finanzas ({{ rol.nombre }})
           </h1>
 
   
@@ -87,6 +87,22 @@
 
 
           </button>
+          <button @click="showSolicitudes()" class="flex items-center gap-2
+                                                px-4 py-2 rounded-xl
+                                                bg-cyan-500/10
+                                                border border-cyan-400/20
+                                                text-cyan-300
+                                                hover:bg-cyan-500/20
+                                                hover:border-cyan-300/40
+                                                transition-all duration-200
+                                                font-mono text-sm">
+ 
+<svg class="w-5 h-5 hover:rotate-12 transition-transform duration-500" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+  <path stroke-linecap="round" stroke-linejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+</svg>
+
+          </button>
+
         </div>
 
         <div class="w-2 h-2 rounded-full
@@ -135,7 +151,7 @@
                  border border-white/5
                  
                  p-4">
- 
+    <span class="text-white" v-if="data.length==0">cargando...</span>
           <DriveTree :rol="rol" :nodes="data" :area_id="area_id"  />
 
         </div>
@@ -169,7 +185,7 @@ const props = defineProps({
 })
 
 // Emits
-const emit = defineEmits(['showPanelBusqueda'])
+const emit = defineEmits(['showPanelBusqueda','showSolicitudes'])
 
 // Data
 const data = ref([])
@@ -218,7 +234,9 @@ const inicializar = () => {
 const showPanelBusqueda = () => {
   emit('showPanelBusqueda', true)
 }
-
+const showSolicitudes = () => {
+  emit('showSolicitudes', area_id.value)
+}
 // Lifecycle
 onMounted(() => {
   inicializar()

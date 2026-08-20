@@ -24,7 +24,7 @@
                  flex items-center justify-center
                  shadow-[0_0_25px_rgba(34,211,238,.15)]">
 
-          <img src="@/assets/images/logo2.png" class="w-16 opacity-90">
+          <img src="@/assets/images/logo2.png" class="w-12 opacity-90">
 
         </div>
 
@@ -48,7 +48,7 @@
           </button>
 
           <span class="sidebar-label">
-            HOME
+            BIBLIOTECA
           </span>
 
         </div>
@@ -73,25 +73,10 @@
 
         </div>
 
-   <!-- ITEM -->
-        <div class="sidebar-item-group">
-
-          <button @click="ExitCodAccion(5)" class="sidebar-button">
-            <svg class="w-5 h-5 hover:scale-110 transition-transform duration-300" fill="none" stroke="currentColor"
-              stroke-width="1.8" viewBox="0 0 24 24">
-              <circle cx="11" cy="11" r="6" stroke-linecap="round" stroke-linejoin="round" />
-
-              <path stroke-linecap="round" stroke-linejoin="round" d="M20 20l-4.2-4.2" />
-            </svg>
-          </button>
-          <span class="sidebar-label">
-           CONTRIB.
-          </span>
-
-        </div>
-
+ 
         <!-- ITEM -->
-        <div class="sidebar-item-group">
+        <div class="sidebar-item-group" 
+        v-if="is_admin">
 
           <button @click="ExitCodAccion(3)" class="sidebar-button">
 
@@ -111,29 +96,7 @@
 
         </div>
 
-        <!-- ITEM -->
-        <div class="sidebar-item-group">
-
-          <button @click="ExitCodAccion(8)" class="sidebar-button">
-
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
-
-              <path stroke-linecap="round" stroke-linejoin="round" d="M3 13h4v8H3v-8z" />
-
-              <path stroke-linecap="round" stroke-linejoin="round" d="M10 7h4v14h-4V7z" />
-
-              <path stroke-linecap="round" stroke-linejoin="round" d="M17 11h4v10h-4V11z" />
-
-            </svg>
-
-          </button>
-
-          <span class="sidebar-label">
-            REPORT
-          </span>
-
-        </div>
-
+      
       </nav>
 
       <!-- FOOTER -->
@@ -200,7 +163,8 @@ export default {
       adminNavigation: [
         { name: "Usuarios", click: () => this.showModalUsuario(), icon: UserGroupIcon },
 
-      ]
+      ],
+      is_admin: this.$store.state.auth.userLogin.is_admin
     }
   },
   props: {

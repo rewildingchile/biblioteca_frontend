@@ -198,10 +198,12 @@
           leave-from-class="translate-x-0 opacity-100" leave-to-class="translate-x-full opacity-0">
 
           <div class="fixed top-0 right-0 z-50
-           h-full w-[720px] bg-white  shadow-2xl border-l border-gray-200  flex flex-col">
- 
+           h-full w-[860px] bg-white  shadow-2xl border-l border-gray-200  flex flex-col">
+           
+        
+
             <FileInfo v-if="seccionVisible === 'info_file'" :nodeSelec="nodeSelec" :area_id="area_seleccionada_id"
-              @cerrarPanelDerecho="cerrarPanelDerecho" />
+             :rol="rolConservacion"   @cerrarPanelDerecho="cerrarPanelDerecho" />
 
             <UloadFile v-if="seccionVisible === 'upload_file'" :nodeSelec="nodeSelec" :area_id="area_seleccionada_id"
               @cerrarPanelDerecho="cerrarPanelDerecho" @refreshTree="refreshTree" />
@@ -221,12 +223,15 @@
 
 
         <div class="min-h-screen bg-gradient-to-br from-sky-200 via-blue-80 to-white  ">
-
+         
+          <br>
           <div v-if="pantalla == 2" class="flex items-start gap-2 p-12">
             <ListaCarpetasDrive v-if="showFinanzas" @showPanelBusqueda="showPanelBusqueda" :rol="rolFinanzas"
-              :prop_json_carpetas="data" />
-            <ListaCarpetasDriveConservacion v-if="showConservacion" @showPanelBusqueda="showPanelBusqueda"
-              :rol="rolConservacion" :prop_json_carpetas="data2" />
+              :prop_json_carpetas="data" @showSolicitudes="showSolicitudes" />
+            
+              <ListaCarpetasDriveConservacion v-if="showConservacion" @showPanelBusqueda="showPanelBusqueda"
+              :rol="rolConservacion" :prop_json_carpetas="data2"  @showSolicitudes="showSolicitudes" />
+
           </div>
 
           <div  v-if="pantalla == 3" >
@@ -238,7 +243,10 @@
           </div>
 
           <div v-if="pantalla == 5">
-            <UserRequest/>
+            <ListRequest  
+              :nodeSelec="nodeSelec" 
+              :area_id="area_seleccionada_id"
+              @cerrarPanelDerecho="cerrarPanelDerecho"  /> 
           </div>
 
         </div>
@@ -428,6 +436,7 @@ export default
       this.rolFinanzas = this.$store.state.auth.userLogin.rolFinanzas
       this.showConservacion = this.$store.state.auth.userLogin.showConservacion
       this.rolConservacion = this.$store.state.auth.userLogin.rolConservacion
+      
       this.pantalla = 2;
 
 
@@ -469,7 +478,7 @@ export default
         this.pantalla = 1;
       },
       chgPantalla(f) {
-
+        console.log('chgpantall')
         this.pantalla = f.id;
 
         this.sidebarOpen = false;
@@ -561,6 +570,13 @@ export default
           console.log(err);
         }
       },
+      showSolicitudes(area_id){
+        this.panelDerechoVisible=true
+        this.area_seleccionada_id = area_id
+        this.seccionVisible='list_request'
+      
+
+      }
     },
 
     data() {
