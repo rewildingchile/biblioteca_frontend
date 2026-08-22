@@ -22,7 +22,7 @@
         <div class="flex items-center gap-2 mt-1 flex-wrap">
           <!-- Ver (solo archivos) -->
           <button v-if="!nodeSelec.is_folder" @click="documentView()"
-            class="px-3 py-1 text-[12px] font-medium text-white bg-white/10 hover:bg-white/20 rounded-lg transition-all duration-200 flex items-center gap-1.5 hover:scale-105">
+            class="px-3 py-1 text-[20px] font-medium text-white bg-white/10 hover:bg-white/20 rounded-lg transition-all duration-200 flex items-center gap-1.5 hover:scale-105">
             <span>👁️</span> Ver
           </button>
 
@@ -33,11 +33,11 @@
           <template v-if="is_admin">
             <!-- Renombrar (para ambos) -->
             <button v-if="nodeSelec.is_folder" @click="confirmRename()"
-              class="px-3 py-1 text-[13px] font-medium text-white bg-white/10 hover:bg-white/20 rounded-lg transition-all duration-200 flex items-center gap-1.5 hover:scale-105">
+              class="px-3 py-1 text-[20px] font-medium text-white bg-white/10 hover:bg-white/20 rounded-lg transition-all duration-200 flex items-center gap-1.5 hover:scale-105">
               <span>✏️</span> Renombrar
             </button>
             <button v-else @click="confirmRename()"
-              class="px-3 py-1 text-[13px] font-medium text-white bg-white/10 hover:bg-white/20 rounded-lg transition-all duration-200 flex items-center gap-1.5 hover:scale-105">
+              class="px-3 py-1 text-[20px] font-medium text-white bg-white/10 hover:bg-white/20 rounded-lg transition-all duration-200 flex items-center gap-1.5 hover:scale-105">
               <span>✏️</span> Renombrar
             </button>
 
@@ -46,7 +46,7 @@
 
             <!-- Borrar (solo archivos) -->
             <button v-if="!nodeSelec.is_folder" @click="confirmDelete()"
-              class="px-3 py-1 text-[13px] font-medium text-white bg-red-500/30 hover:bg-red-500/50 rounded-lg transition-all duration-200 flex items-center gap-1.5 hover:scale-105">
+              class="px-3 py-1 text-[20px] font-medium text-white bg-red-500/30 hover:bg-red-500/50 rounded-lg transition-all duration-200 flex items-center gap-1.5 hover:scale-105">
               <span>🗑️</span> Borrar
             </button>
 
@@ -58,13 +58,13 @@
           
     
             <button   @click="confirmSendRequestRename()"
-              class="px-3 py-1 text-[13px] font-medium text-white bg-white/10 hover:bg-white/20 rounded-lg transition-all duration-200 flex items-center gap-1.5 hover:scale-105">
+              class="px-3 py-1 text-[20px] font-medium text-white bg-white/10 hover:bg-white/20 rounded-lg transition-all duration-200 flex items-center gap-1.5 hover:scale-105">
               <span>✏️</span> Renombrar
             </button>
 
             <!-- Borrar (solo archivos) -->
             <button v-if="!nodeSelec.is_folder" @click="confirmSendRequestDelete()"
-              class="px-3 py-1 text-[13px] font-medium text-white bg-red-500/30 hover:bg-red-500/50 rounded-lg transition-all duration-200 flex items-center gap-1.5 hover:scale-105">
+              class="px-3 py-1 text-[20px] font-medium text-white bg-red-500/30 hover:bg-red-500/50 rounded-lg transition-all duration-200 flex items-center gap-1.5 hover:scale-105">
               <span>🗑️</span> Borrar
             </button>
           </template>
@@ -532,7 +532,7 @@
                hover:bg-gray-200 transition">
           Cancelar
         </button>
-
+        <span v-if="loading">Cargando ...</span> 
       </div>
 
     </div>
@@ -647,6 +647,8 @@ async function enviarRequest(accion_label) {
 }
 async function renombrar(value){
    try {
+    
+    loading.value=true
     const data = {area_id: props.area_id, 
                   drive_file_id: props.nodeSelec?.drive_file_id, 
                   new_name: new_name.value };
@@ -659,7 +661,7 @@ async function renombrar(value){
     const status = resp.data.status;
     switch (status) {
       case 200:
-        console.log("renombrado");
+        loading.value=false
         nodeSelectName.value =new_name.value 
         showConfirmRename.value=false
         break;
