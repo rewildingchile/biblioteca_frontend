@@ -652,7 +652,7 @@ async function renombrar(value){
                   new_name: new_name.value };
     console.log('data', data)
     const resp = await api.post(
-      `api/v1/filedocument/name/update/`,
+      `api/v1/filedocumentname/update/`,
       data,
       { headers: { "Content-Type": "application/json" } }
     );
