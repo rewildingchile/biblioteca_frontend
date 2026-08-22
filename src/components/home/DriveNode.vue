@@ -16,7 +16,7 @@
                 <span>+</span>
               </div>
               <div class="hover:bg-blue-100  ">
-                <span title="contribuir a la carpeta" @click="handleClickCustom(node, 'request')">
+                <span title="contribuir a la carpeta" @click="handleClickCustom(node, 'request')" style="font-size: 18px;">
                   👩🏻‍💻
                 </span>
               </div>
@@ -27,7 +27,7 @@
               class="grid grid-cols-3 gap-0 text-center rounded-xl  p-1 font-medium cursor-pointer transition hover:text-black ">
               <span></span>
               <span></span>
-              <span title="contribuir al archivo" @click="handleClick(node, 'info')" class="hover:bg-blue-100">
+              <span title="contribuir al archivo" @click="handleClick(node, 'info')" class="hover:bg-blue-100" style="font-size: 18px;">
                 👩🏻‍💻
               </span>
             </div>
@@ -46,12 +46,12 @@
               
               <span title="añadir archivo a la carpeta" v-if="node.is_folder"
                 class=" text-center rounded-xl  p-1 font-medium hover:bg-blue-100 hover:text-black cursor-pointer transition"
-                @click="handleClickCustom(node, 'upload_file')">
-                📥
+                @click="handleClickCustom(node, 'upload_file')" style="font-size: 18px;">
+                📤
               </span>
               <span v-if="node.parent_drive_file_id" @click="handleClick(node, 'info')"
-                class="  text-center rounded-xl  p-1 font-medium hover:bg-blue-100 hover:text-black cursor-pointer transition ">
-                ✍🏻
+                class="  text-center rounded-xl  p-1 font-medium hover:bg-blue-100 hover:text-black cursor-pointer transition " style="font-size: 18px;">
+                ✏️
               </span> 
             </div>
           </div>
@@ -61,7 +61,7 @@
               <span></span>
               <span @click="handleClick(node, 'info')"
                 class=" text-center rounded-xl  p-2 font-medium hover:bg-blue-100 hover:text-black cursor-pointer transition">
-                ✍🏻
+                ✏️
               </span>
             </div>
           </div>
