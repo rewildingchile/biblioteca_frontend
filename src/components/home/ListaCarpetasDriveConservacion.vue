@@ -2,12 +2,16 @@
  
 <div class="ml-1   finance-panel-2 relative overflow-hidden">
 
-    <!-- <div class="flex justify-between">
-      <span
-        class="text-xs text-indigo-500 font-mono bg-indigo-50 px-3 py-1 rounded-full shadow-sm">&#60;Home/ListaCarpetasDriveEstrategia.vue&#62;</span>
-    </div>--> 
+    
     <!-- GLOWS -->
-
+<span  class="text-xs tracking-widest 
+                 text-cyan-300/80
+                 border border-cyan-500/20
+                 bg-cyan-500/5
+                 px-3 py-1 rounded-full
+                 font-mono"  >
+          &#60;ListaCarpetasDriveConservation&#62;
+        </span>
 
     <!-- HEADER -->
     <div class="relative z-10
@@ -26,7 +30,7 @@
                  shadow-[0_0_25px_rgba(34,211,238,.18)]">
 
           <!-- FINANCE ICON -->
-          <svg class="w-7 h-7 text-cyan-300" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+          <svg class="w-8 h-8 text-cyan-300" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" >
 
             <path stroke-linecap="round" stroke-linejoin="round" d="M3 17l6-6 4 4 7-7" />
 
@@ -133,8 +137,7 @@
         <!-- TITLE -->
         <div class="flex items-center gap-3 mb-2">
 
-        <span
-          class="text-xs tracking-widest 
+        <span  class="text-xs tracking-widest 
                  text-cyan-300/80
                  border border-cyan-500/20
                  bg-cyan-500/5
@@ -142,7 +145,14 @@
                  font-mono"  >
           &#60;DriveTree&#62;
         </span>
-
+<span  class="text-xs tracking-widest 
+                 text-cyan-300/80
+                 border border-cyan-500/20
+                 bg-cyan-500/5
+                 px-3 py-1 rounded-full
+                 font-mono"  >
+          &#60;DriveNode&#62;
+        </span>
         </div>
 
         <!-- TREE -->

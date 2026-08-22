@@ -1,7 +1,7 @@
 <template>
  
  
-  <div class="ml-6   finance-panel-magenta relative overflow-hidden">
+  <div class="ml-1  finance-panel-magenta relative overflow-hidden">
 <!--
   <div class="flex justify-between">
       <span class="text-xs text-indigo-500 font-mono bg-indigo-50 px-3 py-1 rounded-full shadow-sm">&#60;Home/ListaCarpetasDrive.vue&#62;</span>
