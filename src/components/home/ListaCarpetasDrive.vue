@@ -2,13 +2,15 @@
  
  
   <div class="ml-1  finance-panel-magenta relative overflow-hidden">
-<!--
-  <div class="flex justify-between">
-      <span class="text-xs text-indigo-500 font-mono bg-indigo-50 px-3 py-1 rounded-full shadow-sm">&#60;Home/ListaCarpetasDrive.vue&#62;</span>
-    </div>  
--->
     <!-- GLOWS -->
- 
+<span  class="text-xs tracking-widest 
+                 text-cyan-300/80
+                 border border-cyan-500/20
+                 bg-cyan-500/5
+                 px-3 py-1 rounded-full
+                 font-mono"  >
+          &#60;ListaCarpetas&#62;
+        </span>
 
     <!-- HEADER -->
     <div class="relative z-10
