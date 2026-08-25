@@ -184,9 +184,7 @@ import DriveTree from './DriveTree.vue'
  
 // Props
 const props = defineProps({
-  prop_area_id: {
-    type: Number
-  },
+ 
   prop_json_carpetas: {
     type: Object
   },

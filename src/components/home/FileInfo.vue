@@ -28,7 +28,7 @@
 
           <!-- Separador -->
           <span v-if="!nodeSelec.is_folder" class="text-sky-300/30">|</span>
-
+    
           <!-- Acciones de administrador -->
           <template v-if="is_admin">
             <!-- Renombrar (para ambos) -->
@@ -545,7 +545,9 @@ import api from "@/api/axios";
 import { ref } from 'vue'
 import { computed } from 'vue'
 import { onMounted, onBeforeUnmount, watch } from 'vue'
+import { useStore } from 'vuex'
 
+const store = useStore()
 
 
 const API_ENDPOINT = '/api/v1/deletefile/'
@@ -577,9 +579,22 @@ const props = defineProps({
 })
 
 
-let is_admin
-let is_editor
-const rolUsr = props.rol
+let is_admin = false
+let is_editor = false
+//const rolUsr = props.rol
+let rolUsr;
+switch(props.area_id)
+{
+  case 1:
+  rolUsr =  store.state.auth.userLogin.rolFinanzas
+  break;
+  case 2:
+  rolUsr =  store.state.auth.userLogin.rolConservacion
+  break;
+}
+
+
+console.log('rol:',rolUsr.id)
 if (rolUsr) {
   is_admin = rolUsr?.id === 1
   is_editor = rolUsr?.id === 3

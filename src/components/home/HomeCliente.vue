@@ -203,7 +203,7 @@
         
 
             <FileInfo v-if="seccionVisible === 'info_file'" :nodeSelec="nodeSelec" :area_id="area_seleccionada_id"
-             :rol="rolConservacion"   @cerrarPanelDerecho="cerrarPanelDerecho" />
+            @cerrarPanelDerecho="cerrarPanelDerecho" />
 
             <UloadFile v-if="seccionVisible === 'upload_file'" :nodeSelec="nodeSelec" :area_id="area_seleccionada_id"
               @cerrarPanelDerecho="cerrarPanelDerecho" @refreshTree="refreshTree" />
@@ -226,11 +226,14 @@
          
           <br>
           <div v-if="pantalla == 2" class="flex items-start gap-2 p-12">
-            <ListaCarpetasDrive v-if="showFinanzas" @showPanelBusqueda="showPanelBusqueda" :rol="rolFinanzas"
+          
+            <ListaCarpetasDrive v-if="showFinanzas" @showPanelBusqueda="showPanelBusqueda" 
+               :rol="rolFinanzas"
               :prop_json_carpetas="data" @showSolicitudes="showSolicitudes" />
             
               <ListaCarpetasDriveConservacion v-if="showConservacion" @showPanelBusqueda="showPanelBusqueda"
-              :rol="rolConservacion" :prop_json_carpetas="data2"  @showSolicitudes="showSolicitudes" />
+              :rol="rolConservacion" 
+              :prop_json_carpetas="data2"  @showSolicitudes="showSolicitudes" />
 
           </div>
 
@@ -434,6 +437,7 @@ export default
 
       this.showFinanzas = this.$store.state.auth.userLogin.showFinanzas
       this.rolFinanzas = this.$store.state.auth.userLogin.rolFinanzas
+      console.log("rolFinanzas", this.rolFinanzas,"<---")
       this.showConservacion = this.$store.state.auth.userLogin.showConservacion
       this.rolConservacion = this.$store.state.auth.userLogin.rolConservacion
       
@@ -635,6 +639,7 @@ export default
         showConservacion: false,
         rolFinanzas: {},
         rolConservacion: {},
+        rolEnSesion:{}
       };
     },
 

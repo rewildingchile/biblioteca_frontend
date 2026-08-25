@@ -9,7 +9,7 @@
                  bg-cyan-500/5
                  px-3 py-1 rounded-full
                  font-mono"  >
-          &#60;ListaCarpetas&#62;
+          &#60;ListaCarpetasDrive&#62;
         </span>
 
     <!-- HEADER -->
@@ -154,6 +154,7 @@
                  
                  p-4">
     <span class="text-white" v-if="data.length==0">cargando...</span>
+    
           <DriveTree :rol="rol" :nodes="data" :area_id="area_id"  />
 
         </div>
@@ -177,7 +178,7 @@ import DriveTree from './DriveTree.vue'
  
 // Props
 const props = defineProps({
- 
+  
   prop_json_carpetas: {
     type: Object
   },

@@ -4,7 +4,7 @@
 
     <!-- FILA -->
     <div class="node-row text-sm text-left ">
-
+ 
       <span
         class="  tracking-widest   text-cyan-300/80  border border-cyan-500/20  bg-cyan-500/5  px-0 py-0 rounded-full  font-mono text-lg">
 
