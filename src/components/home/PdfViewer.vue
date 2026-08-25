@@ -60,7 +60,7 @@
         >
           Cerrar
         </button>
-        <button 
+       <!--- <button 
           @click="downloadFile"
           class="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-colors flex items-center gap-2"
         >
@@ -68,7 +68,7 @@
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
           </svg>
           Descargar
-        </button>
+        </button> -->
       </div>
     </div>
   </div>
