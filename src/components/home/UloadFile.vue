@@ -34,18 +34,18 @@
           
           
           
-          <div class="flex gap-3 flex-wrap justify-center text-4xl">
+          <div class="flex gap-3 flex-wrap justify-center text-2xl">
             <button 
               @click="triggerFileInput"
               class="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-all duration-200 shadow-sm hover:shadow-md flex items-center gap-2"
             >
-              <span>📄</span>  
+              <span>Subir achivos 📄</span>  
             </button>
             <button 
               @click="triggerFolderInput"
               class="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg transition-all duration-200 shadow-sm hover:shadow-md flex items-center gap-2"
             >
-              <span>📁</span>  
+              <span>Subir carpetas📁</span>  
             </button>
           </div>
 
