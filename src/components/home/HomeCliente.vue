@@ -676,8 +676,13 @@ export default
       const selectSeccion = (valor) => {
         console.log('-->', valor)
         seccionVisible.value = valor
-        if (valor == 'show_file') {
-          pdfViewerVisible.value = true
+        switch(valor){
+          case 'show_file':
+            pdfViewerVisible.value = true
+            break;
+          case 'menucontext':
+            menuContext.value = true
+            break;
         }
       }
       const selectAreaId = (valor) => {

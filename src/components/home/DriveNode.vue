@@ -235,12 +235,18 @@ const panel = inject('panel')
 
 const handleClick = (node, action) => {
 
-  if (action === 'info') {
-    panel.setVisible(true)
-    panel.seccionVisible('info_file')
-  } else {
-    panel.seccionVisible('show_file')
-  }
+  switch (action) {
+    case 'info':
+      panel.setVisible(true)
+      panel.seccionVisible('info_file')
+      break;
+     case 'view':  
+      panel.seccionVisible('show_file')
+      break;
+     case 'menucontext':  
+      panel.seccionVisible('menucontext')
+      break;
+    }
 
   panel.setNode(node)
   panel.setAreaSelec(props.area_id)

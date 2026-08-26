@@ -45,7 +45,7 @@
             <span v-if="!nodeSelec.is_folder" class="text-sky-300/30">|</span>
 
             <!-- Borrar (solo archivos) -->
-            <button v-if="!nodeSelec.is_folder" @click="confirmDelete()"
+            <button   @click="confirmDelete()"
               class="px-3 py-1 text-[20px] font-medium text-white bg-red-500/30 hover:bg-red-500/50 rounded-lg transition-all duration-200 flex items-center gap-1.5 hover:scale-105">
               <span>🗑️</span> Borrar
             </button>

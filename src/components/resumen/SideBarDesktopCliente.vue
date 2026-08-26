@@ -76,7 +76,7 @@
  
         <!-- ITEM -->
         <div class="sidebar-item-group" 
-        v-if="is_admin">
+        >
 
           <button @click="ExitCodAccion(3)" class="sidebar-button">
 
