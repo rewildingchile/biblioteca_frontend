@@ -197,13 +197,19 @@
           enter-to-class="translate-x-0 opacity-100" leave-active-class="transition duration-200 ease-in"
           leave-from-class="translate-x-0 opacity-100" leave-to-class="translate-x-full opacity-0">
 
-          <div class="fixed top-0 right-0 z-50
-           h-full w-[860px] bg-white  shadow-2xl border-l border-gray-200  flex flex-col">
+          <div class="fixed top-0 right-0 z-50   h-full  bg-white  shadow-2xl border-l border-gray-200  flex flex-col"
+           :class="{ 'w-[860px]': seccionVisible != 'menucontext', 'w-[500px]': seccionVisible == 'menucontext' }">
            
         
 
             <FileInfo v-if="seccionVisible === 'info_file'" :nodeSelec="nodeSelec" :area_id="area_seleccionada_id"
             @cerrarPanelDerecho="cerrarPanelDerecho" />
+      
+
+          
+            <MenuOpciones v-if="seccionVisible === 'menucontext'" :nodeSelec="nodeSelec" :area_id="area_seleccionada_id"
+            @cerrarPanelDerecho="cerrarPanelDerecho" />
+
 
             <UloadFile v-if="seccionVisible === 'upload_file'" :nodeSelec="nodeSelec" :area_id="area_seleccionada_id"
               @cerrarPanelDerecho="cerrarPanelDerecho" @refreshTree="refreshTree" />
@@ -220,7 +226,7 @@
       <!-- MAIN -->
       <main class="flex-1 pb-8">
 
-
+         
 
         <div class="min-h-screen bg-gradient-to-br from-sky-200 via-blue-80 to-white  ">
          
@@ -230,7 +236,7 @@
             <ListaCarpetasDrive v-if="showFinanzas" @showPanelBusqueda="showPanelBusqueda" 
                :rol="rolFinanzas"
               :prop_json_carpetas="data" @showSolicitudes="showSolicitudes" />
-            
+        
               <ListaCarpetasDriveConservacion v-if="showConservacion" @showPanelBusqueda="showPanelBusqueda"
               :rol="rolConservacion" 
               :prop_json_carpetas="data2"  @showSolicitudes="showSolicitudes" />
@@ -321,6 +327,7 @@ import ListRequest from "./ListRequest.vue"
 import PdfViewer from "./PdfViewer.vue"
 import BuscarEnDrive from "./BuscarEnDrive.vue"
 import UserRequest from "./UserRequest.vue"
+import MenuOpciones from "./MenuOpciones.vue"
 import {
   Dialog,
   DialogPanel,
@@ -391,7 +398,8 @@ export default
       ListRequest,
       PdfViewer,
       BuscarEnDrive,
-      UserRequest
+      UserRequest,
+      MenuOpciones
     },
 
     created() {
@@ -649,6 +657,7 @@ export default
       const isPortrait = ref(window.matchMedia("(orientation: portrait)").matches);
       const panelDerechoVisible = ref(false)
       const pdfViewerVisible = ref(false)
+      const menuContext = ref(false)
       const nodeSelec = ref({})
       const seccionVisible = ref(false)
       const area_seleccionada_id = ref(0)
@@ -670,23 +679,23 @@ export default
         panelDerechoVisible.value = valor
       }
       const selectNode = (valor) => {
-        console.log('-->', valor)
+        console.log('selectNode-->', valor)
         nodeSelec.value = valor
       }
       const selectSeccion = (valor) => {
-        console.log('-->', valor)
+        console.log('selectSeccion-->', valor)
         seccionVisible.value = valor
         switch(valor){
           case 'show_file':
             pdfViewerVisible.value = true
             break;
           case 'menucontext':
+            panelDerechoVisible.value=true
             menuContext.value = true
             break;
         }
       }
-      const selectAreaId = (valor) => {
-        console.log('*****', valor)
+      const selectAreaId = (valor) => { 
         area_seleccionada_id.value = valor
       }
       onMounted(() => {
@@ -707,7 +716,7 @@ export default
         setAreaSelec: selectAreaId
       })
 
-      return { isSmallScreen, isPortrait, panelDerechoVisible, nodeSelec, seccionVisible, area_seleccionada_id, pdfViewerVisible };
+      return { isSmallScreen, isPortrait, panelDerechoVisible, nodeSelec, seccionVisible, area_seleccionada_id, pdfViewerVisible, menuContext };
     },
 
   };
