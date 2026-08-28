@@ -137,7 +137,7 @@
         <span class="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full animate-pulse"></span>
       </span>
 
-      <span v-if="!node.is_folder" class="cursor-pointer p-2 " @click="handleClick(node, 'menucontext')"   style="width:400px"> {{ node.name }}  </span>
+      <span v-if="!node.is_folder" class="cursor-pointer p-2 " @click="handleClick(node, 'menucontext')"   style="width:400px"> {{ node.name }}   </span>
       <span v-else @click="toggle" style="width:300px">{{ node.name }}  </span>
 
     </div>

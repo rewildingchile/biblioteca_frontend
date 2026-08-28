@@ -55,7 +55,8 @@
       <!-- Descargar (solo archivos) -->
       <button v-if="!nodeSelec.is_folder" @click="documentDownload()"
         class="w-full px-4 py-3 text-lg font-medium text-green-700 bg-green-50 hover:bg-green-100 rounded-xl transition-all duration-200 flex items-center gap-3 hover:scale-[1.02] border border-green-200/50">
-        <span class="text-2xl">⬇️</span> Descargar
+        <span class="text-2xl">⬇️</span> Descargar 
+        <span v-if="loading" class="font-mono text-xs animate-pulse">Preparando link de descarga ...</span>
       </button>
 
       <!-- Acciones de administrador -->
@@ -163,7 +164,7 @@
           </div>
           <div>
             <h2 class="text-xl  text-white">Vista previa del archivo</h2>
-            <p class="text-sm text-white/70">{{ fileName || 'Documento' }}</p>
+            <p class="text-sm text-white/70">{{ fileName || 'Documento' }}  <span v-if="loading" class="font-mono text-xl animate-pulse">Cargando archivo de {{ formatBytesToMB(nodeSelec.size) }}...</span></p>
           </div>
         </div>
         <button @click="showConfirmViewFile = False"
@@ -179,6 +180,7 @@
       <div class="flex-1 overflow-auto p-4 bg-gray-50/50">
         <div class="pdf-viewer-simple h-full bg-white rounded-lg shadow-inner">
           <!-- Aquí va tu visor de PDF -->
+           
           <div class="p-4">
             <iframe ref="pdfFrame" :src="pdfUrl" width="100%" height="800" />
           </div>
@@ -191,14 +193,15 @@
           class="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors">
           Cerrar
         </button>
-        <button @click="downloadFile"
+        <button @click="documentDownload()"
           class="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-colors flex items-center gap-2">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
               d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
           </svg>
-          Descargar
+          Descargar 
         </button>
+        <span v-if="loading" class="font-mono text-xs animate-pulse">Preparando link de descarga ...</span>
       </div>
     </div>
   </div>
@@ -467,6 +470,9 @@ async function documentView() {
   showConfirmViewFile.value = true
   loadPDF()
 }
+async function documentDownload() {
+  downloadPDF()
+}
 function cerrar() {
 
   emit('cerrarPanelDerecho')
@@ -610,6 +616,53 @@ async function loadPDF() {
 
 
 
+
+async function downloadPDF() {
+  loading.value = true
+
+
+  try {
+    // Obtener el PDF del backend
+    const response = await api.get(`/api/v1/drive/files/${props.nodeSelec?.drive_file_id}/view/`)
+
+    if (response.data.success) {
+
+      const base64Content = response.data.file.content;
+
+
+
+      // Convertir base64 a Blob
+      const byteCharacters = atob(base64Content);
+      const byteNumbers = new Array(byteCharacters.length);
+      for (let i = 0; i < byteCharacters.length; i++) {
+        byteNumbers[i] = byteCharacters.charCodeAt(i);
+      }
+      const byteArray = new Uint8Array(byteNumbers);
+      const blob = new Blob([byteArray], { type: 'application/pdf' });
+
+       // Crear URL de objeto
+      const url = URL.createObjectURL(blob);
+
+      // FORZAR DESCARGA - Crear enlace temporal
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `${props.nodeSelec?.name || 'documento'}.pdf`; // Nombre del archivo
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
+      // Liberar URL después de un tiempo
+      setTimeout(() => {
+        URL.revokeObjectURL(url);
+      }, 100);
+
+      loading.value = false
+    }
+  } catch (err) {
+    console.error('❌ Error cargando PDF:', err)
+    loading.value = false
+  }
+}
 
 
 
